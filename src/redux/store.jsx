@@ -5,6 +5,8 @@ import trainerProfileReducer from "./trainer_slices/trainerProfileSlice.jsx";
 import adminReducer from "./admin_slices/admin_user_trainer_approve.jsx";
 import trainerBookingReducer  from "./user_slices/trainerBookingSlice.jsx";
 import trainerBookingApprovalReducer from "./trainer_slices/trainerBookingApprovalSlice.jsx";
+import dietActionsReducer from "./user_slices/dietActionsSlice.jsx";
+import dietAnalyticsReducer from "./user_slices/dietAnalyticsSlice.jsx";
 
 export const store = configureStore({
   reducer: {
@@ -14,5 +16,7 @@ export const store = configureStore({
     admin: adminReducer,
     trainerBooking: trainerBookingReducer,
     trainerBookingApproval: trainerBookingApprovalReducer,
+    dietActions: dietActionsReducer,
+    dietAnalytics: dietAnalyticsReducer,
   },
 });

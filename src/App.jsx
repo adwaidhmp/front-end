@@ -7,6 +7,7 @@ import ProfilePage from "./components/auth/profile";
 import Home from "./components/home/Home";
 import DietPlanSlider from "./components/home/DietPlanSlider";
 import ExerciseSlider from "./components/home/ExerciseSlider";
+import DietProgress from "./components/home/DietProgress";
 import TrainerSlider from "./components/home/TrainerSlider";
 import LandingPage from "./components/landing";
 import ForgotPasswordRequest from "./components/auth/ForgotPasswordRequest";
@@ -27,6 +28,7 @@ import Dashboard from "./components/admin/Dashboard";
 import UserManagement from "./components/admin/UserManagement";
 import TrainerManagement from "./components/admin/TrainerManagement";
 import TrainerChat from "./components/home/ChatCall";
+import HomeLanding from "./components/home/HomeLanding";
 
 function App() {
   return (
@@ -41,14 +43,19 @@ function App() {
 
         {/* USER */}
         <Route element={<RequireProfile />}>
-          <Route path="/profile_form" element={<ProfileForm />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/diet" element={<DietPlanSlider />} />
-          <Route path="/exercise" element={<ExerciseSlider />} />
-          <Route path="/trainer" element={<TrainerSlider />} />
-          <Route path="/chat-call" element={<TrainerChat />} />
+        <Route path="/profile_form" element={<ProfileForm />} />
+
+        {/* Home becomes a LAYOUT */}
+        <Route path="/" element={<Home />}>
+          <Route index element={<HomeLanding />} />
+          <Route path="diet" element={<DietPlanSlider />} />
+          <Route path="diet-progress" element={<DietProgress />} />
+          <Route path="exercise" element={<ExerciseSlider />} />
+          <Route path="trainer" element={<TrainerSlider />} />
+          <Route path="chat-call" element={<TrainerChat />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
+      </Route>
 
         {/* TRAINER */}
         <Route element={<RequireTrainerProfile />}>
