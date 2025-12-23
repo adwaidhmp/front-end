@@ -29,6 +29,7 @@ import UserManagement from "./components/admin/UserManagement";
 import TrainerManagement from "./components/admin/TrainerManagement";
 import TrainerChat from "./components/home/ChatCall";
 import HomeLanding from "./components/home/HomeLanding";
+import PageNotFound from "./components/PageNotFound";
 
 function App() {
   return (
@@ -46,7 +47,7 @@ function App() {
         <Route path="/profile_form" element={<ProfileForm />} />
 
         {/* Home becomes a LAYOUT */}
-        <Route path="/" element={<Home />}>
+        <Route path="home/" element={<Home />}>
           <Route index element={<HomeLanding />} />
           <Route path="diet" element={<DietPlanSlider />} />
           <Route path="diet-progress" element={<DietProgress />} />
@@ -77,7 +78,7 @@ function App() {
         </Route>
 
         {/* GLOBAL FALLBACK */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

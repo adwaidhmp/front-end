@@ -1,11 +1,41 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../api2.jsx"; // axios instance with auth
+import api from "../../api2.jsx";
 
 /* ============================
    THUNKS
 ============================ */
 
-// Generate diet plan
+/**
+ * GET current diet plan
+ * Safe on refresh, does NOT regenerate
+ */
+export const fetchCurrentDietPlan = createAsyncThunk(
+  "dietActions/fetchCurrentDietPlan",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await api.get("diet-plan/");
+      return res.data;
+    } catch (err) {
+      // IMPORTANT:
+      // "no active diet plan" is NOT a real error
+      if (
+        err.response?.status === 404 ||
+        err.response?.data?.detail === "No active diet plan"
+      ) {
+        return { has_plan: false };
+      }
+
+      return rejectWithValue(
+        err.response?.data?.detail || "Failed to fetch diet plan"
+      );
+    }
+  }
+);
+
+/**
+ * POST generate new diet plan
+ * Explicit user action only
+ */
 export const generateDietPlan = createAsyncThunk(
   "dietActions/generateDietPlan",
   async (_, { rejectWithValue }) => {
@@ -20,7 +50,9 @@ export const generateDietPlan = createAsyncThunk(
   }
 );
 
-// Follow meal from plan
+/**
+ * Follow meal from plan
+ */
 export const followMealFromPlan = createAsyncThunk(
   "dietActions/followMealFromPlan",
   async (payload, { rejectWithValue }) => {
@@ -28,14 +60,14 @@ export const followMealFromPlan = createAsyncThunk(
       const res = await api.post("diet/follow-meal/", payload);
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.detail || "Failed to follow meal"
-      );
+      return rejectWithValue("Failed to follow meal");
     }
   }
 );
 
-// Log custom meal with AI
+/**
+ * Log custom meal with AI
+ */
 export const logCustomMeal = createAsyncThunk(
   "dietActions/logCustomMeal",
   async (payload, { rejectWithValue }) => {
@@ -43,14 +75,14 @@ export const logCustomMeal = createAsyncThunk(
       const res = await api.post("diet/log-custom-meal/", payload);
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.detail || "Failed to log custom meal"
-      );
+      return rejectWithValue("Failed to log custom meal");
     }
   }
 );
 
-// Skip meal
+/**
+ * Skip meal
+ */
 export const skipMeal = createAsyncThunk(
   "dietActions/skipMeal",
   async (payload, { rejectWithValue }) => {
@@ -58,14 +90,15 @@ export const skipMeal = createAsyncThunk(
       const res = await api.post("diet/skip-meal/", payload);
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.detail || "Failed to skip meal"
-      );
+      return rejectWithValue("Failed to skip meal");
     }
   }
 );
 
-// Update weight (IMPORTANT: triggers weekly regeneration backend side)
+/**
+ * Update weight
+ * Backend may auto-regenerate weekly plan
+ */
 export const updateWeight = createAsyncThunk(
   "dietActions/updateWeight",
   async (payload, { rejectWithValue }) => {
@@ -73,9 +106,7 @@ export const updateWeight = createAsyncThunk(
       const res = await api.post("diet/update-weight/", payload);
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.detail || "Failed to update weight"
-      );
+      return rejectWithValue("Failed to update weight");
     }
   }
 );
@@ -89,37 +120,80 @@ const dietActionsSlice = createSlice({
   initialState: {
     loading: false,
     error: null,
-    success: false,
+
+    currentPlan: null,   // null = no plan yet
     lastResponse: null,
   },
   reducers: {
     clearDietActionState(state) {
       state.loading = false;
       state.error = null;
-      state.success = false;
       state.lastResponse = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addMatcher(
-        (action) => action.type.startsWith("dietActions/") && action.type.endsWith("/pending"),
-        (state) => {
-          state.loading = true;
-          state.error = null;
-          state.success = false;
+
+      /* -------- FETCH CURRENT PLAN -------- */
+      .addCase(fetchCurrentDietPlan.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentDietPlan.fulfilled, (state, action) => {
+        state.loading = false;
+
+        if (action.payload?.has_plan === false) {
+          state.currentPlan = null;
+        } else {
+          state.currentPlan = action.payload;
         }
-      )
+      })
+      .addCase(fetchCurrentDietPlan.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      /* -------- GENERATE PLAN -------- */
+      .addCase(generateDietPlan.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(generateDietPlan.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentPlan = action.payload;
+      })
+      .addCase(generateDietPlan.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      /* -------- OTHER ACTIONS -------- */
       .addMatcher(
-        (action) => action.type.startsWith("dietActions/") && action.type.endsWith("/fulfilled"),
+        (action) =>
+          action.type.startsWith("dietActions/") &&
+          action.type.endsWith("/fulfilled") &&
+          ![
+            fetchCurrentDietPlan.fulfilled.type,
+            generateDietPlan.fulfilled.type,
+          ].includes(action.type),
         (state, action) => {
           state.loading = false;
-          state.success = true;
           state.lastResponse = action.payload;
         }
       )
       .addMatcher(
-        (action) => action.type.startsWith("dietActions/") && action.type.endsWith("/rejected"),
+        (action) =>
+          action.type.startsWith("dietActions/") &&
+          action.type.endsWith("/pending"),
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        (action) =>
+          action.type.startsWith("dietActions/") &&
+          action.type.endsWith("/rejected"),
         (state, action) => {
           state.loading = false;
           state.error = action.payload;

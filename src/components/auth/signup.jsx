@@ -149,14 +149,7 @@ const Signup = () => {
   const borderColor = isUser ? 'border-purple-500/30' : 'border-blue-500/30';
 
   return (
-    <div className="h-screen bg-black text-white overflow-hidden">
-      {/* Disable scrolling */}
-      <style jsx global>{`
-        body {
-          overflow: hidden !important;
-        }
-      `}</style>
-      
+    <div className="h-screen bg-black text-white ">
       {/* Main Split Layout - No scrolling */}
       <div className="h-full flex flex-col lg:flex-row">
         

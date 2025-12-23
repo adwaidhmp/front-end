@@ -12,15 +12,15 @@ const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const sections = [
-    {path: "/", label: "Home", icon: "🏠", color: "from-purple-600 to-pink-600" },
-    { path: "/diet", label: "Diet Plans", icon: "🥗" },
-    { path: "/diet-progress", label: "Diet Progress", icon: "📈" },
-    { path: "/exercise", label: "Exercises", icon: "💪" },
-    { path: "/trainer", label: "Trainers", icon: "👨‍🏫" },
-    { path: "/chat-call", label: "Chat & Call", icon: "💬" },
-    { path: "/profile", label: "My Profile", icon: "👤" },
-  ];
+const sections = [
+  { path: "/home", label: "Home", icon: "🏠", color: "from-purple-600 to-pink-600" },
+  { path: "/home/diet", label: "Diet Plans", icon: "🥗" },
+  { path: "/home/diet-progress", label: "Diet Progress", icon: "📈" },
+  { path: "/home/exercise", label: "Exercises", icon: "💪" },
+  { path: "/home/trainer", label: "Trainers", icon: "👨‍🏫" },
+  { path: "/home/chat-call", label: "Chat & Call", icon: "💬" },
+  { path: "/home/profile", label: "My Profile", icon: "👤" },
+];
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">

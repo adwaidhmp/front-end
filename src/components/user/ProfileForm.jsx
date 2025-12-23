@@ -78,6 +78,7 @@ const ProfileForm = () => {
         gender: "",
         height_cm: "",
         weight_kg: "",
+        target_weight_kg:"",
         goal: "",
         body_type: "",
         activity_level: "",
@@ -100,6 +101,10 @@ const ProfileForm = () => {
       weight_kg:
         profile.weight_kg !== null && profile.weight_kg !== undefined
           ? String(profile.weight_kg)
+          : "",
+      target_weight_kg:
+        profile.target_weight_kg !== null && profile.target_weight_kg !== undefined
+          ? String(profile.target_weight_kg)
           : "",
       goal: profile.goal || "",
       body_type: profile.body_type || "",
@@ -160,6 +165,7 @@ const ProfileForm = () => {
       gender: form.gender || null,
       height_cm: form.height_cm ? parseFloat(form.height_cm) : null,
       weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
+      target_weight_kg: form.target_weight_kg ? parseFloat(form.target_weight_kg) : null,
       goal: form.goal || null,
       body_type: form.body_type || "",
       activity_level: form.activity_level || null,
@@ -234,7 +240,7 @@ const ProfileForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           {/* dob + gender */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
                 Date of Birth {isMissing("dob") && <span className="text-red-400">*</span>}
@@ -288,6 +294,23 @@ const ProfileForm = () => {
                   isMissing("height_cm") ? "border-red-500" : "border-gray-700"
                 } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
               />
+              <div>
+              <label className="block mb-1 text-gray-300 text-xs">
+                Target Weight (kg) {isMissing("target_weight_kg") && (
+                  <span className="text-red-400">*</span>
+                )}
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                name="target_weight_kg"
+                value={form.target_weight_kg}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${
+                  isMissing("target_weight_kg") ? "border-red-500" : "border-gray-700"
+                } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
+              />
+            </div>
             </div>
 
             <div>

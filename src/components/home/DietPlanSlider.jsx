@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ChevronRight,
-  Plus,
-  SkipForward,
-  Weight,
-} from "lucide-react";
+import { ChevronRight, Plus, SkipForward, Weight } from "lucide-react";
 
 import {
+  fetchCurrentDietPlan,
   generateDietPlan,
   followMealFromPlan,
   skipMeal,
@@ -18,19 +14,19 @@ import {
 
 const DietPlanSlider = () => {
   const dispatch = useDispatch();
-  const { loading, error, lastResponse } = useSelector(
+
+  const { loading, error, currentPlan } = useSelector(
     (state) => state.dietActions
   );
 
-  const [dietPlan, setDietPlan] = useState(null);
   const [customMeals, setCustomMeals] = useState({});
   const [weight, setWeight] = useState("");
 
   /* ============================
-     LOAD DIET PLAN
+     LOAD CURRENT PLAN
   ============================ */
   useEffect(() => {
-    dispatch(generateDietPlan());
+    dispatch(fetchCurrentDietPlan());
 
     return () => {
       dispatch(clearDietActionState());
@@ -38,77 +34,72 @@ const DietPlanSlider = () => {
   }, [dispatch]);
 
   /* ============================
-     NORMALIZE AI RESPONSE
+     NORMALIZE PLAN
   ============================ */
-  useEffect(() => {
-    if (!lastResponse) return;
+  const dietPlan = useMemo(() => {
+    if (!currentPlan || !currentPlan.meals) return null;
 
-    const plan = lastResponse.plan || lastResponse;
-    if (!plan?.meals) return;
-
-    const normalizedMeals = plan.meals.map((meal) => ({
+    const meals = currentPlan.meals.map((meal) => ({
       meal_type: meal.name.toLowerCase(),
       display_name: meal.name,
       items: meal.items || [],
     }));
 
-    setDietPlan({
-      daily_calories: plan.daily_calories,
-      macros: plan.macros,
-      meals: normalizedMeals,
-      disclaimer: plan.disclaimer,
-    });
-
-    // initialize custom meal inputs per meal
     const inputs = {};
-    normalizedMeals.forEach((m) => {
-      inputs[m.meal_type] = "";
-    });
+    meals.forEach((m) => (inputs[m.meal_type] = ""));
     setCustomMeals(inputs);
-  }, [lastResponse]);
 
+    return {
+      daily_calories: currentPlan.daily_calories,
+      macros: currentPlan.macros,
+      meals,
+      disclaimer: currentPlan.disclaimer,
+    };
+  }, [currentPlan]);
+
+  /* ============================
+     LOADING
+  ============================ */
   if (loading && !dietPlan) {
-    return <div className="text-gray-400">Generating your AI diet plan…</div>;
+    return <div className="text-gray-400">Loading diet plan…</div>;
   }
 
+  /* ============================
+     ERROR (REAL ERRORS ONLY)
+  ============================ */
   if (error) {
     return <div className="text-red-500">{error}</div>;
   }
 
-  if (!dietPlan) return null;
+  /* ============================
+     NO PLAN YET (FIRST TIME USER)
+  ============================ */
+  if (!dietPlan) {
+    return (
+      <div className="text-center py-16">
+        <h3 className="text-2xl font-bold mb-3">No Diet Plan Yet</h3>
+        <p className="text-gray-400 mb-6">
+          Generate your first AI-powered diet plan to get started.
+        </p>
+        <button
+          onClick={() => dispatch(generateDietPlan())}
+          className="px-6 py-3 bg-purple-600 rounded-md"
+        >
+          Generate Diet Plan
+        </button>
+      </div>
+    );
+  }
 
   /* ============================
      ACTION HANDLERS
   ============================ */
-  const handleFollowMeal = (mealType) => {
-    dispatch(followMealFromPlan({ meal_type: mealType }));
-  };
-
-  const handleSkipMeal = (mealType) => {
-    dispatch(skipMeal({ meal_type: mealType }));
-  };
-
   const handleCustomMeal = (mealType) => {
-    const foodText = customMeals[mealType];
-    if (!foodText || !foodText.trim()) return;
+    const text = customMeals[mealType];
+    if (!text?.trim()) return;
 
-    dispatch(
-      logCustomMeal({
-        meal_type: mealType,
-        food_text: foodText,
-      })
-    );
-
-    setCustomMeals((prev) => ({
-      ...prev,
-      [mealType]: "",
-    }));
-  };
-
-  const handleWeightUpdate = () => {
-    if (!weight) return;
-    dispatch(updateWeight({ weight }));
-    setWeight("");
+    dispatch(logCustomMeal({ meal_type: mealType, food_text: text }));
+    setCustomMeals((prev) => ({ ...prev, [mealType]: "" }));
   };
 
   /* ============================
@@ -117,11 +108,20 @@ const DietPlanSlider = () => {
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold">Your AI Diet Plan</h3>
-        <p className="text-gray-400">
-          Daily target: {dietPlan.daily_calories} kcal
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h3 className="text-2xl font-bold">Your AI Diet Plan</h3>
+          <p className="text-gray-400">
+            Daily target: {dietPlan.daily_calories} kcal
+          </p>
+        </div>
+
+        <button
+          onClick={() => dispatch(generateDietPlan())}
+          className="px-4 py-2 bg-purple-600 rounded-md text-sm"
+        >
+          Regenerate Plan
+        </button>
       </div>
 
       {/* Meals */}
@@ -131,11 +131,9 @@ const DietPlanSlider = () => {
             key={meal.meal_type}
             className="bg-gray-900/60 border border-gray-800 rounded-xl p-4"
           >
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="font-semibold capitalize">
-                {meal.display_name}
-              </h4>
-            </div>
+            <h4 className="font-semibold mb-2 capitalize">
+              {meal.display_name}
+            </h4>
 
             <ul className="text-sm text-gray-300 mb-3 list-disc pl-5">
               {meal.items.map((item, idx) => (
@@ -143,10 +141,11 @@ const DietPlanSlider = () => {
               ))}
             </ul>
 
-            {/* Actions */}
             <div className="flex gap-3 mb-4">
               <button
-                onClick={() => handleFollowMeal(meal.meal_type)}
+                onClick={() =>
+                  dispatch(followMealFromPlan({ meal_type: meal.meal_type }))
+                }
                 className="flex items-center gap-1 px-3 py-1 bg-green-600 rounded-md text-sm"
               >
                 <ChevronRight size={16} />
@@ -154,7 +153,9 @@ const DietPlanSlider = () => {
               </button>
 
               <button
-                onClick={() => handleSkipMeal(meal.meal_type)}
+                onClick={() =>
+                  dispatch(skipMeal({ meal_type: meal.meal_type }))
+                }
                 className="flex items-center gap-1 px-3 py-1 bg-gray-700 rounded-md text-sm"
               >
                 <SkipForward size={16} />
@@ -162,13 +163,12 @@ const DietPlanSlider = () => {
               </button>
             </div>
 
-            {/* Custom Meal for this meal */}
             <div className="flex gap-2">
               <input
                 value={customMeals[meal.meal_type] || ""}
                 onChange={(e) =>
-                  setCustomMeals((prev) => ({
-                    ...prev,
+                  setCustomMeals((p) => ({
+                    ...p,
                     [meal.meal_type]: e.target.value,
                   }))
                 }
@@ -189,9 +189,6 @@ const DietPlanSlider = () => {
       {/* Weight Update */}
       <div className="mt-6 bg-gray-900/60 border border-gray-800 rounded-xl p-4">
         <h4 className="font-semibold mb-2">Weekly Weight Update</h4>
-        <p className="text-sm text-gray-400 mb-2">
-          Updating weight may regenerate your plan
-        </p>
         <div className="flex gap-2">
           <input
             type="number"
@@ -201,7 +198,12 @@ const DietPlanSlider = () => {
             className="flex-1 bg-gray-800 rounded-md px-3 py-2 text-sm"
           />
           <button
-            onClick={handleWeightUpdate}
+            onClick={() => {
+              if (weight) {
+                dispatch(updateWeight({ weight }));
+                setWeight("");
+              }
+            }}
             className="px-3 py-2 bg-blue-600 rounded-md"
           >
             <Weight size={16} />
@@ -209,11 +211,8 @@ const DietPlanSlider = () => {
         </div>
       </div>
 
-      {/* Disclaimer */}
       {dietPlan.disclaimer && (
-        <p className="mt-4 text-xs text-gray-500">
-          {dietPlan.disclaimer}
-        </p>
+        <p className="mt-4 text-xs text-gray-500">{dietPlan.disclaimer}</p>
       )}
     </div>
   );

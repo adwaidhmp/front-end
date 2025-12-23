@@ -34,8 +34,15 @@ import {
 const FIELD_CONFIG = {
   dob: { label: "Date of Birth", icon: Calendar, type: "date" },
   gender: { label: "Gender", icon: User, type: "select" },
+
   height_cm: { label: "Height (cm)", icon: Ruler, type: "number" },
   weight_kg: { label: "Weight (kg)", icon: Weight, type: "number" },
+  target_weight_kg: {
+    label: "Target Weight (kg)",
+    icon: Target,
+    type: "number",
+  },
+
   goal: { label: "Fitness Goal", icon: Target, type: "select" },
   activity_level: { label: "Activity Level", icon: Activity, type: "select" },
   exercise_experience: {
@@ -43,6 +50,7 @@ const FIELD_CONFIG = {
     icon: Star,
     type: "select",
   },
+
   body_type: { label: "Body Type", icon: User, type: "select" },
   diet_constraints: { label: "Diet Constraints", icon: User, type: "textarea" },
   allergies: { label: "Allergies", icon: User, type: "text" },

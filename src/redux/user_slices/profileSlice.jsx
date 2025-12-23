@@ -8,6 +8,7 @@ const REQUIRED_FIELDS = [
   "gender",
   "height_cm",
   "weight_kg",
+  "target_weight_kg",
   "goal",
   "activity_level",
   "exercise_experience",
