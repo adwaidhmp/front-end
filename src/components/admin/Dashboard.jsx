@@ -50,9 +50,24 @@ const Dashboard = () => {
 
   const recentActivities = [
     { id: 1, user: "John Doe", action: "User registered", time: "2 min ago" },
-    { id: 2, user: "Jane Smith", action: "Trainer approved", time: "15 min ago" },
-    { id: 3, user: "Mike Johnson", action: "Account deactivated", time: "1 hour ago" },
-    { id: 4, user: "Sarah Wilson", action: "Profile updated", time: "2 hours ago" },
+    {
+      id: 2,
+      user: "Jane Smith",
+      action: "Trainer approved",
+      time: "15 min ago",
+    },
+    {
+      id: 3,
+      user: "Mike Johnson",
+      action: "Account deactivated",
+      time: "1 hour ago",
+    },
+    {
+      id: 4,
+      user: "Sarah Wilson",
+      action: "Profile updated",
+      time: "2 hours ago",
+    },
   ];
 
   return (
@@ -60,7 +75,7 @@ const Dashboard = () => {
       <Title level={2} className="mb-6">
         Dashboard Overview
       </Title>
-      
+
       <Row gutter={[24, 24]} className="mb-8">
         {stats.map((stat, index) => (
           <Col xs={24} sm={12} lg={6} key={index}>
@@ -84,7 +99,9 @@ const Dashboard = () => {
                 ) : (
                   <ArrowDownOutlined className="text-red-500" />
                 )}
-                <Text className={`text-sm ${stat.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                <Text
+                  className={`text-sm ${stat.isPositive ? "text-green-500" : "text-red-500"}`}
+                >
                   {stat.change > 0 ? "+" : ""}
                   {stat.change}% from last month
                 </Text>
@@ -93,11 +110,15 @@ const Dashboard = () => {
           </Col>
         ))}
       </Row>
-      
+
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={12}>
           <Card
-            title={<Title level={4} className="m-0">Recent Activities</Title>}
+            title={
+              <Title level={4} className="m-0">
+                Recent Activities
+              </Title>
+            }
             className="rounded-xl shadow-sm h-full"
           >
             <Space direction="vertical" size="middle" className="w-full">
@@ -118,10 +139,14 @@ const Dashboard = () => {
             </Space>
           </Card>
         </Col>
-        
+
         <Col xs={24} lg={12}>
           <Card
-            title={<Title level={4} className="m-0">Quick Actions</Title>}
+            title={
+              <Title level={4} className="m-0">
+                Quick Actions
+              </Title>
+            }
             className="rounded-xl shadow-sm h-full"
           >
             <Row gutter={[16, 16]}>

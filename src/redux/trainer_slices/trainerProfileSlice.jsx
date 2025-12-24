@@ -37,9 +37,11 @@ export const fetchTrainerProfile = createAsyncThunk(
       return res.data;
     } catch (err) {
       const data = err.response?.data;
-      return rejectWithValue(data || { detail: "Failed to fetch trainer profile." });
+      return rejectWithValue(
+        data || { detail: "Failed to fetch trainer profile." },
+      );
     }
-  }
+  },
 );
 
 // PATCH trainer profile (multipart for certificates)
@@ -57,9 +59,11 @@ export const updateTrainerProfile = createAsyncThunk(
       return fresh.data;
     } catch (err) {
       const data = err.response?.data;
-      return rejectWithValue(data || { detail: "Failed to update trainer profile." });
+      return rejectWithValue(
+        data || { detail: "Failed to update trainer profile." },
+      );
     }
-  }
+  },
 );
 
 // GET trainer info (basic info from user service)
@@ -71,9 +75,11 @@ export const fetchTrainerInfo = createAsyncThunk(
       return res.data;
     } catch (err) {
       const data = err.response?.data;
-      return rejectWithValue(data || { detail: "Failed to load trainer info." });
+      return rejectWithValue(
+        data || { detail: "Failed to load trainer info." },
+      );
     }
-  }
+  },
 );
 
 // PATCH trainer info (basic editable fields)
@@ -85,9 +91,11 @@ export const updateTrainerInfo = createAsyncThunk(
       return res.data;
     } catch (err) {
       const data = err.response?.data;
-      return rejectWithValue(data || { detail: "Failed to update trainer info." });
+      return rejectWithValue(
+        data || { detail: "Failed to update trainer info." },
+      );
     }
-  }
+  },
 );
 
 /* ========= Slice ========= */
@@ -133,7 +141,10 @@ const trainerProfileSlice = createSlice({
       .addCase(fetchTrainerProfile.rejected, (state, action) => {
         state.loadingProfile = false;
         const payload = action.payload || {};
-        state.error = payload.detail || action.error?.message || "Failed to fetch trainer profile.";
+        state.error =
+          payload.detail ||
+          action.error?.message ||
+          "Failed to fetch trainer profile.";
       })
 
       // update trainer profile (multipart + fetch)
@@ -154,7 +165,10 @@ const trainerProfileSlice = createSlice({
       .addCase(updateTrainerProfile.rejected, (state, action) => {
         state.loadingProfile = false;
         const payload = action.payload || {};
-        state.error = payload.detail || action.error?.message || "Failed to update trainer profile.";
+        state.error =
+          payload.detail ||
+          action.error?.message ||
+          "Failed to update trainer profile.";
         state.missingFields = payload.missing_fields || [];
       })
 
@@ -170,7 +184,10 @@ const trainerProfileSlice = createSlice({
       .addCase(fetchTrainerInfo.rejected, (state, action) => {
         state.loadingTrainerInfo = false;
         const payload = action.payload || {};
-        state.error = payload.detail || action.error?.message || "Failed to fetch trainer info.";
+        state.error =
+          payload.detail ||
+          action.error?.message ||
+          "Failed to fetch trainer info.";
       })
 
       // update trainer info
@@ -185,10 +202,14 @@ const trainerProfileSlice = createSlice({
       .addCase(updateTrainerInfo.rejected, (state, action) => {
         state.loadingTrainerInfo = false;
         const payload = action.payload || {};
-        state.error = payload.detail || action.error?.message || "Failed to update trainer info.";
+        state.error =
+          payload.detail ||
+          action.error?.message ||
+          "Failed to update trainer info.";
       });
   },
 });
 
-export const { clearTrainerErrors, setTrainerNeedsSetup } = trainerProfileSlice.actions;
+export const { clearTrainerErrors, setTrainerNeedsSetup } =
+  trainerProfileSlice.actions;
 export default trainerProfileSlice.reducer;

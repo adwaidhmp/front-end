@@ -47,7 +47,7 @@ const Login = () => {
         setIsGoogleLoading(false);
       }
     },
-    [dispatch, navigate, location]
+    [dispatch, navigate, location],
   );
 
   useEffect(() => {
@@ -70,14 +70,14 @@ const Login = () => {
             text: "continue_with",
             shape: "pill",
             width: "100%",
-          }
+          },
         );
       }
     };
 
     if (!GOOGLE_CLIENT_ID) {
       console.warn(
-        "VITE_GOOGLE_CLIENT_ID is not set. Google Sign-In will not work."
+        "VITE_GOOGLE_CLIENT_ID is not set. Google Sign-In will not work.",
       );
       return;
     }
@@ -139,7 +139,6 @@ const Login = () => {
     },
   });
 
-
   return (
     <div className="min-h-screen bg-black text-white overflow-auto">
       {/* Main Split Layout - No scrolling */}
@@ -196,10 +195,11 @@ const Login = () => {
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    className={`w-full px-3 py-2 text-sm bg-gray-800 border ${formik.touched.email && formik.errors.email
+                    className={`w-full px-3 py-2 text-sm bg-gray-800 border ${
+                      formik.touched.email && formik.errors.email
                         ? "border-red-500"
                         : "border-gray-700"
-                      } rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                    } rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
                     placeholder="Enter your email"
                     disabled={loading}
                   />
@@ -224,10 +224,11 @@ const Login = () => {
                       value={formik.values.password}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className={`w-full px-3 py-2 text-sm pr-10 bg-gray-800 border ${formik.touched.password && formik.errors.password
+                      className={`w-full px-3 py-2 text-sm pr-10 bg-gray-800 border ${
+                        formik.touched.password && formik.errors.password
                           ? "border-red-500"
                           : "border-gray-700"
-                        } rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                      } rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
                       placeholder="Enter your password"
                       disabled={loading}
                     />
@@ -301,8 +302,9 @@ const Login = () => {
               <div className="mb-4">
                 <div
                   id="googleSignInButton"
-                  className={`w-full ${isGoogleLoading ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                  className={`w-full ${
+                    isGoogleLoading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   {isGoogleLoading && (
                     <div className="flex items-center justify-center py-2.5 bg-gray-800 rounded-lg">

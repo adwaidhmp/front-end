@@ -16,8 +16,7 @@ export const fetchCurrentDietPlan = createAsyncThunk(
       const res = await api.get("diet-plan/");
       return res.data;
     } catch (err) {
-      // IMPORTANT:
-      // "no active diet plan" is NOT a real error
+      // "No active diet plan" is NOT an error
       if (
         err.response?.status === 404 ||
         err.response?.data?.detail === "No active diet plan"
@@ -26,10 +25,10 @@ export const fetchCurrentDietPlan = createAsyncThunk(
       }
 
       return rejectWithValue(
-        err.response?.data?.detail || "Failed to fetch diet plan"
+        err.response?.data?.detail || "Failed to fetch diet plan",
       );
     }
-  }
+  },
 );
 
 /**
@@ -44,10 +43,10 @@ export const generateDietPlan = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(
-        err.response?.data?.detail || "Failed to generate diet plan"
+        err.response?.data?.detail || "Failed to generate diet plan",
       );
     }
-  }
+  },
 );
 
 /**
@@ -59,10 +58,10 @@ export const followMealFromPlan = createAsyncThunk(
     try {
       const res = await api.post("diet/follow-meal/", payload);
       return res.data;
-    } catch (err) {
+    } catch {
       return rejectWithValue("Failed to follow meal");
     }
-  }
+  },
 );
 
 /**
@@ -74,10 +73,25 @@ export const logCustomMeal = createAsyncThunk(
     try {
       const res = await api.post("diet/log-custom-meal/", payload);
       return res.data;
-    } catch (err) {
+    } catch {
       return rejectWithValue("Failed to log custom meal");
     }
-  }
+  },
+);
+
+/**
+ * Log extra meal (NEW)
+ */
+export const logExtraMeal = createAsyncThunk(
+  "dietActions/logExtraMeal",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await api.post("diet/extra-meal/", payload);
+      return res.data;
+    } catch {
+      return rejectWithValue("Failed to log extra meal");
+    }
+  },
 );
 
 /**
@@ -89,15 +103,15 @@ export const skipMeal = createAsyncThunk(
     try {
       const res = await api.post("diet/skip-meal/", payload);
       return res.data;
-    } catch (err) {
+    } catch {
       return rejectWithValue("Failed to skip meal");
     }
-  }
+  },
 );
 
 /**
- * Update weight
- * Backend may auto-regenerate weekly plan
+ * Update weight (weekly)
+ * Backend may regenerate plan
  */
 export const updateWeight = createAsyncThunk(
   "dietActions/updateWeight",
@@ -105,25 +119,27 @@ export const updateWeight = createAsyncThunk(
     try {
       const res = await api.post("diet/update-weight/", payload);
       return res.data;
-    } catch (err) {
+    } catch {
       return rejectWithValue("Failed to update weight");
     }
-  }
+  },
 );
 
 /* ============================
    SLICE
 ============================ */
 
+const initialState = {
+  loading: false,
+  error: null,
+
+  currentPlan: null, // null = no plan yet
+  lastResponse: null, // feedback for follow/skip/custom/extra
+};
+
 const dietActionsSlice = createSlice({
   name: "dietActions",
-  initialState: {
-    loading: false,
-    error: null,
-
-    currentPlan: null,   // null = no plan yet
-    lastResponse: null,
-  },
+  initialState,
   reducers: {
     clearDietActionState(state) {
       state.loading = false;
@@ -141,12 +157,8 @@ const dietActionsSlice = createSlice({
       })
       .addCase(fetchCurrentDietPlan.fulfilled, (state, action) => {
         state.loading = false;
-
-        if (action.payload?.has_plan === false) {
-          state.currentPlan = null;
-        } else {
-          state.currentPlan = action.payload;
-        }
+        state.currentPlan =
+          action.payload?.has_plan === false ? null : action.payload;
       })
       .addCase(fetchCurrentDietPlan.rejected, (state, action) => {
         state.loading = false;
@@ -167,7 +179,18 @@ const dietActionsSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* -------- OTHER ACTIONS -------- */
+      /* -------- ALL OTHER ACTIONS -------- */
+      .addMatcher(
+        (action) =>
+          action.type.startsWith("dietActions/") &&
+          action.type.endsWith("/pending") &&
+          !action.type.includes("fetchCurrentDietPlan") &&
+          !action.type.includes("generateDietPlan"),
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        },
+      )
       .addMatcher(
         (action) =>
           action.type.startsWith("dietActions/") &&
@@ -179,16 +202,7 @@ const dietActionsSlice = createSlice({
         (state, action) => {
           state.loading = false;
           state.lastResponse = action.payload;
-        }
-      )
-      .addMatcher(
-        (action) =>
-          action.type.startsWith("dietActions/") &&
-          action.type.endsWith("/pending"),
-        (state) => {
-          state.loading = true;
-          state.error = null;
-        }
+        },
       )
       .addMatcher(
         (action) =>
@@ -197,7 +211,7 @@ const dietActionsSlice = createSlice({
         (state, action) => {
           state.loading = false;
           state.error = action.payload;
-        }
+        },
       );
   },
 });

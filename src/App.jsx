@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./app.css";
 import Login from "./components/auth/login";
 import Signup from "./components/auth/signup";
@@ -40,28 +45,34 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/reset-password" element={<ForgotPasswordRequest />} />
-        <Route path="/reset-password-confirm" element={<ForgotPasswordConfirm />} />
+        <Route
+          path="/reset-password-confirm"
+          element={<ForgotPasswordConfirm />}
+        />
 
         {/* USER */}
         <Route element={<RequireProfile />}>
-        <Route path="/profile_form" element={<ProfileForm />} />
+          <Route path="/profile_form" element={<ProfileForm />} />
 
-        {/* Home becomes a LAYOUT */}
-        <Route path="home/" element={<Home />}>
-          <Route index element={<HomeLanding />} />
-          <Route path="diet" element={<DietPlanSlider />} />
-          <Route path="diet-progress" element={<DietProgress />} />
-          <Route path="exercise" element={<ExerciseSlider />} />
-          <Route path="trainer" element={<TrainerSlider />} />
-          <Route path="chat-call" element={<TrainerChat />} />
-          <Route path="profile" element={<ProfilePage />} />
+          {/* Home becomes a LAYOUT */}
+          <Route path="home/" element={<Home />}>
+            <Route index element={<HomeLanding />} />
+            <Route path="diet" element={<DietPlanSlider />} />
+            <Route path="diet-progress" element={<DietProgress />} />
+            <Route path="exercise" element={<ExerciseSlider />} />
+            <Route path="trainer" element={<TrainerSlider />} />
+            <Route path="chat-call" element={<TrainerChat />} />
+            <Route path="profile" element={<ProfilePage />} />
+          </Route>
         </Route>
-      </Route>
 
         {/* TRAINER */}
         <Route element={<RequireTrainerProfile />}>
           <Route path="/trainer-profile" element={<TrainerProfilePage />} />
-          <Route path="/trainer_profile_form" element={<TrainerProfileForm />} />
+          <Route
+            path="/trainer_profile_form"
+            element={<TrainerProfileForm />}
+          />
           <Route path="/trainer-home" element={<TrainerHome />} />
           <Route path="/clients" element={<ConfirmedClients />} />
           <Route path="/client-request" element={<PendingRequests />} />

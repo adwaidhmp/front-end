@@ -16,7 +16,7 @@ const DietPlanSlider = () => {
   const dispatch = useDispatch();
 
   const { loading, error, currentPlan } = useSelector(
-    (state) => state.dietActions
+    (state) => state.dietActions,
   );
 
   const [customMeals, setCustomMeals] = useState({});
@@ -45,10 +45,6 @@ const DietPlanSlider = () => {
       items: meal.items || [],
     }));
 
-    const inputs = {};
-    meals.forEach((m) => (inputs[m.meal_type] = ""));
-    setCustomMeals(inputs);
-
     return {
       daily_calories: currentPlan.daily_calories,
       macros: currentPlan.macros,
@@ -56,6 +52,17 @@ const DietPlanSlider = () => {
       disclaimer: currentPlan.disclaimer,
     };
   }, [currentPlan]);
+
+  /* ============================
+     SET CUSTOM MEALS INPUTS
+  ============================ */
+  useEffect(() => {
+    if (dietPlan && dietPlan.meals) {
+      const inputs = {};
+      dietPlan.meals.forEach((m) => (inputs[m.meal_type] = ""));
+      setCustomMeals(inputs);
+    }
+  }, [dietPlan]);
 
   /* ============================
      LOADING

@@ -1,31 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { 
-  User, Mail, Phone, Lock, Shield, Dumbbell, Users, Sparkles, Key, AlertCircle, 
-  Brain, TrendingUp, Target, CheckCircle
-} from 'lucide-react';
-import { 
-  requestOtp, 
-  registerUser, 
+import React, { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Phone,
+  Lock,
+  Shield,
+  Dumbbell,
+  Users,
+  Sparkles,
+  Key,
+  AlertCircle,
+  Brain,
+  TrendingUp,
+  Target,
+  CheckCircle,
+} from "lucide-react";
+import {
+  requestOtp,
+  registerUser,
   registerTrainer,
-  clearError 
-} from '../../redux/user_slices/authSlice';
+  clearError,
+} from "../../redux/user_slices/authSlice";
 
 const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [activeForm, setActiveForm] = useState('user');
+  const [activeForm, setActiveForm] = useState("user");
   const [showOtp, setShowOtp] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  
-  const { loading, error, isAuthenticated, user } = useSelector(state => state.auth);
+
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.auth,
+  );
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      navigate('/home');
+      navigate("/home");
     }
   }, [isAuthenticated, user, navigate]);
 
@@ -34,97 +48,70 @@ const Signup = () => {
   }, [activeForm, dispatch]);
 
   const otpValidation = Yup.string()
-    .matches(/^[0-9]{6}$/, 'OTP must be exactly 6 digits')
-    .required('OTP is required');
+    .matches(/^[0-9]{6}$/, "OTP must be exactly 6 digits")
+    .required("OTP is required");
 
   const userValidationSchema = Yup.object({
-    name: Yup.string().required('Full name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    phone: Yup.string().required('Phone number is required'),
+    name: Yup.string().required("Full name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    phone: Yup.string().required("Phone number is required"),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
-    ...(showOtp && { otp: otpValidation })
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+    ...(showOtp && { otp: otpValidation }),
   });
 
   const trainerValidationSchema = Yup.object({
-    name: Yup.string().required('Professional name is required'),
-    email: Yup.string().email('Invalid email').required('Email is required'),
-    phone: Yup.string().required('Contact number is required'),
+    name: Yup.string().required("Professional name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    phone: Yup.string().required("Contact number is required"),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
-    ...(showOtp && { otp: otpValidation })
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+    ...(showOtp && { otp: otpValidation }),
   });
 
   const handleGetOtp = async (formik) => {
-    formik.validateField('email');
-    
+    formik.validateField("email");
+
     if (formik.errors.email || !formik.values.email) {
-      formik.setFieldTouched('email', true);
+      formik.setFieldTouched("email", true);
       return;
     }
-    
+
     try {
       await dispatch(requestOtp(formik.values.email)).unwrap();
       setShowOtp(true);
       setOtpSent(true);
       dispatch(clearError());
     } catch (err) {
-      console.error('Failed to send OTP:', err);
+      console.error("Failed to send OTP:", err);
     }
   };
 
   const handleResendOtp = async (formik) => {
     if (!formik.values.email) {
-      formik.setFieldError('email', 'Email is required to resend OTP');
+      formik.setFieldError("email", "Email is required to resend OTP");
       return;
     }
-    
+
     try {
       await dispatch(requestOtp(formik.values.email)).unwrap();
-      console.log('OTP resent successfully');
+      console.log("OTP resent successfully");
     } catch (err) {
-      console.error('Failed to resend OTP:', err);
+      console.error("Failed to resend OTP:", err);
     }
   };
 
   const userFormik = useFormik({
-    initialValues: { name: '', email: '', phone: '', password: '', otp: '' },
+    initialValues: { name: "", email: "", phone: "", password: "", otp: "" },
     validationSchema: userValidationSchema,
     onSubmit: async (values) => {
       if (!showOtp) {
-        userFormik.setFieldError('otp', 'Please verify with OTP first');
+        userFormik.setFieldError("otp", "Please verify with OTP first");
         return;
       }
-      
-      try {
-        const payload = {
-          name: values.name,
-          email: values.email,
-          phone: values.phone,
-          password: values.password,
-          otp: values.otp
-        };
-        
-        await dispatch(registerUser(payload)).unwrap();
-        navigate('/login');
-        console.log('User registration successful');
-      } catch (err) {
-        console.error('Registration failed:', err);
-      }
-    },
-  });
 
-  const trainerFormik = useFormik({
-    initialValues: { name: '', email: '', phone: '', password: '', otp: '' },
-    validationSchema: trainerValidationSchema,
-    onSubmit: async (values) => {
-      if (!showOtp) {
-        trainerFormik.setFieldError('otp', 'Please verify with OTP first');
-        return;
-      }
-      
       try {
         const payload = {
           name: values.name,
@@ -133,26 +120,54 @@ const Signup = () => {
           password: values.password,
           otp: values.otp,
         };
-        
-        await dispatch(registerTrainer(payload)).unwrap();
-        navigate('/login');
-        console.log('Trainer registration successful');
+
+        await dispatch(registerUser(payload)).unwrap();
+        navigate("/login");
+        console.log("User registration successful");
       } catch (err) {
-        console.error('Trainer registration failed:', err);
+        console.error("Registration failed:", err);
       }
     },
   });
 
-  const currentFormik = activeForm === 'user' ? userFormik : trainerFormik;
-  const isUser = activeForm === 'user';
-  const gradient = isUser ? 'from-purple-600 to-pink-600' : 'from-blue-600 to-cyan-600';
-  const borderColor = isUser ? 'border-purple-500/30' : 'border-blue-500/30';
+  const trainerFormik = useFormik({
+    initialValues: { name: "", email: "", phone: "", password: "", otp: "" },
+    validationSchema: trainerValidationSchema,
+    onSubmit: async (values) => {
+      if (!showOtp) {
+        trainerFormik.setFieldError("otp", "Please verify with OTP first");
+        return;
+      }
+
+      try {
+        const payload = {
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          password: values.password,
+          otp: values.otp,
+        };
+
+        await dispatch(registerTrainer(payload)).unwrap();
+        navigate("/login");
+        console.log("Trainer registration successful");
+      } catch (err) {
+        console.error("Trainer registration failed:", err);
+      }
+    },
+  });
+
+  const currentFormik = activeForm === "user" ? userFormik : trainerFormik;
+  const isUser = activeForm === "user";
+  const gradient = isUser
+    ? "from-purple-600 to-pink-600"
+    : "from-blue-600 to-cyan-600";
+  const borderColor = isUser ? "border-purple-500/30" : "border-blue-500/30";
 
   return (
     <div className="h-screen bg-black text-white ">
       {/* Main Split Layout - No scrolling */}
       <div className="h-full flex flex-col lg:flex-row">
-        
         {/* Left Column - Platform Information */}
         <div className="lg:w-1/2 h-full bg-linear-to-br from-gray-900 via-black to-purple-900/20 p-4 flex flex-col justify-center">
           <div className="max-w-md mx-auto w-full">
@@ -162,10 +177,14 @@ const Signup = () => {
                 <Dumbbell className="w-7 h-7" />
               </div>
               <h1 className="text-xl font-bold mb-1">
-                Welcome to <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">FitAI</span>
+                Welcome to{" "}
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-400">
+                  FitAI
+                </span>
               </h1>
               <p className="text-gray-300 text-sm mb-4">
-                Join the future of fitness with AI-powered workouts, personalized nutrition, and expert guidance.
+                Join the future of fitness with AI-powered workouts,
+                personalized nutrition, and expert guidance.
               </p>
             </div>
 
@@ -176,9 +195,12 @@ const Signup = () => {
                   <Brain className="w-4 h-4 text-purple-400" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-1">AI-Powered Fitness</h4>
+                  <h4 className="text-sm font-semibold text-white mb-1">
+                    AI-Powered Fitness
+                  </h4>
                   <p className="text-xs text-gray-400">
-                    Adaptive workout and nutrition plans that evolve with your progress.
+                    Adaptive workout and nutrition plans that evolve with your
+                    progress.
                   </p>
                 </div>
               </div>
@@ -188,9 +210,12 @@ const Signup = () => {
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-1">Progress Tracking</h4>
+                  <h4 className="text-sm font-semibold text-white mb-1">
+                    Progress Tracking
+                  </h4>
                   <p className="text-xs text-gray-400">
-                    Detailed analytics, progress photos, and performance metrics.
+                    Detailed analytics, progress photos, and performance
+                    metrics.
                   </p>
                 </div>
               </div>
@@ -200,7 +225,9 @@ const Signup = () => {
                   <Users className="w-4 h-4 text-pink-400" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-white mb-1">Expert Community</h4>
+                  <h4 className="text-sm font-semibold text-white mb-1">
+                    Expert Community
+                  </h4>
                   <p className="text-xs text-gray-400">
                     Connect with certified trainers and fitness enthusiasts.
                   </p>
@@ -230,11 +257,15 @@ const Signup = () => {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-gray-300">Secure & encrypted data</span>
+                <span className="text-xs text-gray-300">
+                  Secure & encrypted data
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-gray-300">No credit card required</span>
+                <span className="text-xs text-gray-300">
+                  No credit card required
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-400" />
@@ -254,7 +285,7 @@ const Signup = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      setActiveForm('user');
+                      setActiveForm("user");
                       setShowOtp(false);
                       setOtpSent(false);
                       dispatch(clearError());
@@ -262,7 +293,7 @@ const Signup = () => {
                     className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
                       isUser
                         ? `bg-linear-to-r ${gradient} text-white`
-                        : 'text-gray-400 hover:text-white'
+                        : "text-gray-400 hover:text-white"
                     }`}
                     disabled={loading}
                   >
@@ -271,11 +302,11 @@ const Signup = () => {
                       Fitness Member
                     </div>
                   </button>
-                  
+
                   <button
                     type="button"
                     onClick={() => {
-                      setActiveForm('trainer');
+                      setActiveForm("trainer");
                       setShowOtp(false);
                       setOtpSent(false);
                       dispatch(clearError());
@@ -283,7 +314,7 @@ const Signup = () => {
                     className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all ${
                       !isUser
                         ? `bg-linear-to-r ${gradient} text-white`
-                        : 'text-gray-400 hover:text-white'
+                        : "text-gray-400 hover:text-white"
                     }`}
                     disabled={loading}
                   >
@@ -299,10 +330,14 @@ const Signup = () => {
             {/* Form Header */}
             <div className="text-center mb-4">
               <h2 className="text-lg font-bold mb-1">
-                {isUser ? 'Create Your Fitness Account' : 'Join as Certified Trainer'}
+                {isUser
+                  ? "Create Your Fitness Account"
+                  : "Join as Certified Trainer"}
               </h2>
               <p className="text-gray-400 text-xs">
-                {isUser ? 'Start your personalized fitness journey today' : 'Expand your training business with AI tools'}
+                {isUser
+                  ? "Start your personalized fitness journey today"
+                  : "Expand your training business with AI tools"}
               </p>
             </div>
 
@@ -312,7 +347,7 @@ const Signup = () => {
                 <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-2 flex items-center gap-2">
                   <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                   <div className="text-red-200 text-xs flex-1">
-                    {typeof error === 'object' 
+                    {typeof error === "object"
                       ? JSON.stringify(error, null, 2)
                       : error}
                   </div>
@@ -334,7 +369,7 @@ const Signup = () => {
                   {/* Name Field */}
                   <div>
                     <label className="block text-xs font-medium text-gray-300 mb-1">
-                      {isUser ? 'Full Name' : 'Professional Name'}
+                      {isUser ? "Full Name" : "Professional Name"}
                     </label>
                     <input
                       type="text"
@@ -342,13 +377,20 @@ const Signup = () => {
                       value={currentFormik.values.name}
                       onChange={currentFormik.handleChange}
                       onBlur={currentFormik.handleBlur}
-                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? 'purple' : 'blue'}-500 focus:ring-2 focus:ring-${isUser ? 'purple' : 'blue'}-500/50 transition-all ${currentFormik.touched.name && currentFormik.errors.name ? 'border-red-500' : ''}`}
-                      placeholder={isUser ? "Enter your full name" : "Enter your professional name"}
+                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? "purple" : "blue"}-500 focus:ring-2 focus:ring-${isUser ? "purple" : "blue"}-500/50 transition-all ${currentFormik.touched.name && currentFormik.errors.name ? "border-red-500" : ""}`}
+                      placeholder={
+                        isUser
+                          ? "Enter your full name"
+                          : "Enter your professional name"
+                      }
                       disabled={loading}
                     />
-                    {currentFormik.touched.name && currentFormik.errors.name && (
-                      <p className="mt-1 text-xs text-red-400">{currentFormik.errors.name}</p>
-                    )}
+                    {currentFormik.touched.name &&
+                      currentFormik.errors.name && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {currentFormik.errors.name}
+                        </p>
+                      )}
                   </div>
 
                   {/* Email Field */}
@@ -362,19 +404,24 @@ const Signup = () => {
                       value={currentFormik.values.email}
                       onChange={currentFormik.handleChange}
                       onBlur={currentFormik.handleBlur}
-                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? 'purple' : 'blue'}-500 focus:ring-2 focus:ring-${isUser ? 'purple' : 'blue'}-500/50 transition-all ${currentFormik.touched.email && currentFormik.errors.email ? 'border-red-500' : ''}`}
-                      placeholder={isUser ? "member@example.com" : "trainer@example.com"}
+                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? "purple" : "blue"}-500 focus:ring-2 focus:ring-${isUser ? "purple" : "blue"}-500/50 transition-all ${currentFormik.touched.email && currentFormik.errors.email ? "border-red-500" : ""}`}
+                      placeholder={
+                        isUser ? "member@example.com" : "trainer@example.com"
+                      }
                       disabled={loading || otpSent}
                     />
-                    {currentFormik.touched.email && currentFormik.errors.email && (
-                      <p className="mt-1 text-xs text-red-400">{currentFormik.errors.email}</p>
-                    )}
+                    {currentFormik.touched.email &&
+                      currentFormik.errors.email && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {currentFormik.errors.email}
+                        </p>
+                      )}
                   </div>
 
                   {/* Phone Field */}
                   <div>
                     <label className="block text-xs font-medium text-gray-300 mb-1">
-                      {isUser ? 'Phone Number' : 'Contact Number'}
+                      {isUser ? "Phone Number" : "Contact Number"}
                     </label>
                     <input
                       type="tel"
@@ -382,13 +429,16 @@ const Signup = () => {
                       value={currentFormik.values.phone}
                       onChange={currentFormik.handleChange}
                       onBlur={currentFormik.handleBlur}
-                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? 'purple' : 'blue'}-500 focus:ring-2 focus:ring-${isUser ? 'purple' : 'blue'}-500/50 transition-all ${currentFormik.touched.phone && currentFormik.errors.phone ? 'border-red-500' : ''}`}
+                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? "purple" : "blue"}-500 focus:ring-2 focus:ring-${isUser ? "purple" : "blue"}-500/50 transition-all ${currentFormik.touched.phone && currentFormik.errors.phone ? "border-red-500" : ""}`}
                       placeholder="+91 (123) 456-7890"
                       disabled={loading}
                     />
-                    {currentFormik.touched.phone && currentFormik.errors.phone && (
-                      <p className="mt-1 text-xs text-red-400">{currentFormik.errors.phone}</p>
-                    )}
+                    {currentFormik.touched.phone &&
+                      currentFormik.errors.phone && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {currentFormik.errors.phone}
+                        </p>
+                      )}
                   </div>
 
                   {/* Password Field */}
@@ -402,13 +452,16 @@ const Signup = () => {
                       value={currentFormik.values.password}
                       onChange={currentFormik.handleChange}
                       onBlur={currentFormik.handleBlur}
-                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? 'purple' : 'blue'}-500 focus:ring-2 focus:ring-${isUser ? 'purple' : 'blue'}-500/50 transition-all ${currentFormik.touched.password && currentFormik.errors.password ? 'border-red-500' : ''}`}
+                      className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? "purple" : "blue"}-500 focus:ring-2 focus:ring-${isUser ? "purple" : "blue"}-500/50 transition-all ${currentFormik.touched.password && currentFormik.errors.password ? "border-red-500" : ""}`}
                       placeholder="Create a strong password"
                       disabled={loading}
                     />
-                    {currentFormik.touched.password && currentFormik.errors.password && (
-                      <p className="mt-1 text-xs text-red-400">{currentFormik.errors.password}</p>
-                    )}
+                    {currentFormik.touched.password &&
+                      currentFormik.errors.password && (
+                        <p className="mt-1 text-xs text-red-400">
+                          {currentFormik.errors.password}
+                        </p>
+                      )}
                   </div>
 
                   {/* OTP Section */}
@@ -425,14 +478,17 @@ const Signup = () => {
                             value={currentFormik.values.otp}
                             onChange={currentFormik.handleChange}
                             onBlur={currentFormik.handleBlur}
-                            className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? 'purple' : 'blue'}-500 focus:ring-2 focus:ring-${isUser ? 'purple' : 'blue'}-500/50 transition-all ${currentFormik.touched.otp && currentFormik.errors.otp ? 'border-red-500' : ''}`}
+                            className={`w-full px-3 py-2 text-xs bg-gray-800 border ${borderColor} rounded-lg focus:border-${isUser ? "purple" : "blue"}-500 focus:ring-2 focus:ring-${isUser ? "purple" : "blue"}-500/50 transition-all ${currentFormik.touched.otp && currentFormik.errors.otp ? "border-red-500" : ""}`}
                             placeholder="Enter 6-digit OTP"
                             maxLength="6"
                             disabled={loading}
                           />
-                          {currentFormik.touched.otp && currentFormik.errors.otp && (
-                            <p className="mt-1 text-xs text-red-400">{currentFormik.errors.otp}</p>
-                          )}
+                          {currentFormik.touched.otp &&
+                            currentFormik.errors.otp && (
+                              <p className="mt-1 text-xs text-red-400">
+                                {currentFormik.errors.otp}
+                              </p>
+                            )}
                         </div>
                         <button
                           type="button"
@@ -440,7 +496,7 @@ const Signup = () => {
                           className="px-3 py-2 text-xs bg-gray-800 text-gray-300 border border-blue-500/30 rounded-lg hover:bg-blue-900/30 hover:text-white transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={loading || !currentFormik.values.email}
                         >
-                          {loading ? '...' : 'Resend'}
+                          {loading ? "..." : "Resend"}
                         </button>
                       </div>
                     </div>
@@ -462,7 +518,7 @@ const Signup = () => {
                           Sending...
                         </>
                       ) : (
-                        'Get Verification OTP'
+                        "Get Verification OTP"
                       )}
                     </button>
                   ) : (
@@ -479,7 +535,7 @@ const Signup = () => {
                       ) : (
                         <>
                           <Shield className="w-3.5 h-3.5" />
-                          {isUser ? 'Create Account' : 'Register as Trainer'}
+                          {isUser ? "Create Account" : "Register as Trainer"}
                         </>
                       )}
                     </button>
@@ -492,11 +548,11 @@ const Signup = () => {
                 <p className="text-xs text-gray-400">
                   {isUser ? (
                     <>
-                      Are you a trainer?{' '}
+                      Are you a trainer?{" "}
                       <button
                         type="button"
                         onClick={() => {
-                          setActiveForm('trainer');
+                          setActiveForm("trainer");
                           setShowOtp(false);
                           setOtpSent(false);
                           dispatch(clearError());
@@ -509,11 +565,11 @@ const Signup = () => {
                     </>
                   ) : (
                     <>
-                      Looking for fitness guidance?{' '}
+                      Looking for fitness guidance?{" "}
                       <button
                         type="button"
                         onClick={() => {
-                          setActiveForm('user');
+                          setActiveForm("user");
                           setShowOtp(false);
                           setOtpSent(false);
                           dispatch(clearError());
@@ -533,8 +589,11 @@ const Signup = () => {
             <div className="text-center text-xs text-gray-500">
               <p>By signing up, you agree to our Terms and Privacy Policy</p>
               <p className="mt-1">
-                Already have an account?{' '}
-                <a href="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
+                Already have an account?{" "}
+                <a
+                  href="/login"
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                >
                   Sign in here
                 </a>
               </p>

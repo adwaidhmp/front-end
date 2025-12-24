@@ -12,12 +12,9 @@ const TrainerSlider = () => {
   const dispatch = useDispatch();
 
   // ✅ correct selector
-  const {
-    approvedTrainers,
-    loading,
-    error,
-    actionSuccess,
-  } = useSelector((state) => state.trainerBooking);
+  const { approvedTrainers, loading, error, actionSuccess } = useSelector(
+    (state) => state.trainerBooking,
+  );
 
   const [selectedTrainer, setSelectedTrainer] = useState(0);
 
@@ -30,26 +27,22 @@ const TrainerSlider = () => {
   }, [dispatch]);
 
   useEffect(() => {
-  if (error) {
-    message.error(
-      typeof error === "string"
-        ? error
-        : error?.detail || "Booking failed"
-    );
-    dispatch(clearTrainerState());
-  }
+    if (error) {
+      message.error(
+        typeof error === "string" ? error : error?.detail || "Booking failed",
+      );
+      dispatch(clearTrainerState());
+    }
 
-  if (actionSuccess) {
-    message.success(actionSuccess);
-    dispatch(clearTrainerState());
-  }
-}, [error, actionSuccess, dispatch]);
-
+    if (actionSuccess) {
+      message.success(actionSuccess);
+      dispatch(clearTrainerState());
+    }
+  }, [error, actionSuccess, dispatch]);
 
   if (loading && approvedTrainers.length === 0) {
     return <div className="text-center text-gray-400">Loading trainers...</div>;
   }
-
 
   if (!approvedTrainers || approvedTrainers.length === 0) {
     return (
@@ -60,9 +53,9 @@ const TrainerSlider = () => {
   const activeTrainer = approvedTrainers[selectedTrainer];
 
   const handleBookTrainer = () => {
-    dispatch(bookTrainer(activeTrainer.id));;
+    dispatch(bookTrainer(activeTrainer.id));
   };
-console.log(approvedTrainers);
+  console.log(approvedTrainers);
   return (
     <div>
       {/* Header */}
@@ -139,9 +132,7 @@ console.log(approvedTrainers);
                   </span>
                 </div>
                 <div>
-                  <h4 className="text-2xl font-bold">
-                    {activeTrainer.name}
-                  </h4>
+                  <h4 className="text-2xl font-bold">{activeTrainer.name}</h4>
                   <p className="text-gray-300">
                     {activeTrainer.specialties?.[0] || "Fitness Trainer"}
                   </p>
@@ -175,9 +166,7 @@ console.log(approvedTrainers);
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-sm">
-                    No specialties listed
-                  </p>
+                  <p className="text-gray-400 text-sm">No specialties listed</p>
                 )}
               </div>
             </div>
@@ -190,9 +179,7 @@ console.log(approvedTrainers);
             </div>
 
             {actionSuccess && (
-              <p className="text-green-400 text-sm mb-3">
-                {actionSuccess}
-              </p>
+              <p className="text-green-400 text-sm mb-3">{actionSuccess}</p>
             )}
 
             <button

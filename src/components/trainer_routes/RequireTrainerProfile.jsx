@@ -11,13 +11,16 @@ const RequireTrainerProfile = () => {
   const dispatch = useDispatch();
 
   // auth slice: { isAuthenticated, loading, user }
-  const { isAuthenticated, loading: authLoading, user } = useSelector(
-    (state) => state.auth || {}
-  );
+  const {
+    isAuthenticated,
+    loading: authLoading,
+    user,
+  } = useSelector((state) => state.auth || {});
 
   // trainer profile slice: { profile, loadingProfile, trainerNeedsSetup }
-  const { profile, loadingProfile, trainerNeedsSetup } =
-    useSelector((state) => state.trainerProfile || {});
+  const { profile, loadingProfile, trainerNeedsSetup } = useSelector(
+    (state) => state.trainerProfile || {},
+  );
 
   const userLoaded = !!user;
   const isTrainer = Boolean(user?.role === "trainer");

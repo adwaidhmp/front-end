@@ -24,7 +24,10 @@ import {
   UserOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { fetchUsers, updateUserStatus } from "../../redux/admin_slices/admin_user_trainer_approve";
+import {
+  fetchUsers,
+  updateUserStatus,
+} from "../../redux/admin_slices/admin_user_trainer_approve";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -50,7 +53,7 @@ const UserManagement = () => {
       data = data.filter(
         (u) =>
           u.email?.toLowerCase().includes(q) ||
-          u.name?.toLowerCase().includes(q)
+          u.name?.toLowerCase().includes(q),
       );
     }
 
@@ -64,9 +67,7 @@ const UserManagement = () => {
   const handleStatusChange = async (userId, is_active) => {
     try {
       await dispatch(updateUserStatus({ userId, is_active })).unwrap();
-      message.success(
-        `User ${is_active ? "activated" : "deactivated"}`
-      );
+      message.success(`User ${is_active ? "activated" : "deactivated"}`);
     } catch {
       message.error("Failed to update status");
     }
@@ -83,9 +84,7 @@ const UserManagement = () => {
             className={record.is_active ? "bg-blue-500" : "bg-gray-300"}
           />
           <div>
-            <div className="font-medium">
-              {record.name || "Unknown User"}
-            </div>
+            <div className="font-medium">{record.name || "Unknown User"}</div>
             <Text type="secondary" className="text-xs">
               {record.email}
             </Text>
@@ -98,7 +97,11 @@ const UserManagement = () => {
       dataIndex: "role",
       key: "role",
       render: (role) => (
-        <Tag color={role === "admin" ? "red" : role === "trainer" ? "blue" : "default"}>
+        <Tag
+          color={
+            role === "admin" ? "red" : role === "trainer" ? "blue" : "default"
+          }
+        >
           {role?.toUpperCase()}
         </Tag>
       ),
@@ -118,7 +121,7 @@ const UserManagement = () => {
       title: "Joined",
       dataIndex: "date_joined",
       key: "date_joined",
-      render: (date) => date ? new Date(date).toLocaleDateString() : "-",
+      render: (date) => (date ? new Date(date).toLocaleDateString() : "-"),
     },
     {
       title: "Actions",
@@ -139,9 +142,7 @@ const UserManagement = () => {
           <Tooltip title={record.is_active ? "Deactivate" : "Activate"}>
             <Switch
               checked={record.is_active}
-              onChange={(checked) =>
-                handleStatusChange(record.id, checked)
-              }
+              onChange={(checked) => handleStatusChange(record.id, checked)}
               size="small"
             />
           </Tooltip>
@@ -248,9 +249,7 @@ const UserManagement = () => {
             <div>{selectedUser.is_active ? "Active" : "Inactive"}</div>
 
             <Text strong>Joined:</Text>
-            <div>
-              {new Date(selectedUser.created_at).toLocaleDateString()}
-            </div>
+            <div>{new Date(selectedUser.created_at).toLocaleDateString()}</div>
           </>
         )}
       </Modal>

@@ -15,14 +15,14 @@ const REQUIRED_FIELDS = [
 ];
 
 const initialState = {
-  data: null,              // profile object from backend (always exists)
-  loading: false,          // used for fetch + save
-  error: null,             // string or object from backend
-  missingFields: [],       // backend ValidationError.missing_fields
-  needsProfileSetup: false,// true if profile_completed is false
+  data: null, // profile object from backend (always exists)
+  loading: false, // used for fetch + save
+  error: null, // string or object from backend
+  missingFields: [], // backend ValidationError.missing_fields
+  needsProfileSetup: false, // true if profile_completed is false
 
   // choices state (new)
-  choices: null,           // { gender: [...], goal: [...], ... }
+  choices: null, // { gender: [...], goal: [...], ... }
   choicesLoading: false,
   choicesError: null,
 };
@@ -38,7 +38,7 @@ export const fetchUserProfile = createAsyncThunk(
       const data = err.response?.data;
       return rejectWithValue(data || { detail: "Unable to fetch profile." });
     }
-  }
+  },
 );
 
 // GET /profile/choices/
@@ -50,9 +50,11 @@ export const fetchProfileChoices = createAsyncThunk(
       return res.data;
     } catch (err) {
       const data = err.response?.data;
-      return rejectWithValue(data || { detail: "Unable to fetch profile choices." });
+      return rejectWithValue(
+        data || { detail: "Unable to fetch profile choices." },
+      );
     }
-  }
+  },
 );
 
 // PATCH /profile/
@@ -66,7 +68,7 @@ export const updateUserProfile = createAsyncThunk(
       const data = err.response?.data;
       return rejectWithValue(data || { detail: "Unable to update profile." });
     }
-  }
+  },
 );
 
 const profileSlice = createSlice({
@@ -103,7 +105,8 @@ const profileSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
         const payload = action.payload || {};
-        state.error = payload.detail || action.error.message || "Unable to fetch profile.";
+        state.error =
+          payload.detail || action.error.message || "Unable to fetch profile.";
         // do not set needsProfileSetup here; keep as-is
       });
 
@@ -120,7 +123,10 @@ const profileSlice = createSlice({
       .addCase(fetchProfileChoices.rejected, (state, action) => {
         state.choicesLoading = false;
         const payload = action.payload || {};
-        state.choicesError = payload.detail || action.error.message || "Unable to fetch profile choices.";
+        state.choicesError =
+          payload.detail ||
+          action.error.message ||
+          "Unable to fetch profile choices.";
       });
 
     // UPDATE PROFILE
@@ -143,7 +149,8 @@ const profileSlice = createSlice({
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false;
         const payload = action.payload || {};
-        state.error = payload.detail || action.error.message || "Unable to update profile.";
+        state.error =
+          payload.detail || action.error.message || "Unable to update profile.";
         state.missingFields = payload.missing_fields || [];
       });
   },

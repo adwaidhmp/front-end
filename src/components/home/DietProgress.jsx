@@ -1,12 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Flame,
-  TrendingUp,
-  Calendar,
-  Weight,
-  AlertCircle,
-} from "lucide-react";
+import { Flame, TrendingUp, Calendar, Weight, AlertCircle } from "lucide-react";
 
 import {
   fetchDailyCalories,
@@ -80,9 +74,7 @@ const DietProgress = () => {
   const weeklyTarget = weeklyProgress.weekly_target_calories ?? 0;
 
   // Monthly calories
-  const dailyValues = Object.values(
-    monthlyCalories.daily_calories || {}
-  );
+  const dailyValues = Object.values(monthlyCalories.daily_calories || {});
 
   const monthlyActual = monthlyCalories.monthly_actual ?? 0;
   const monthlyTarget = monthlyCalories.monthly_target ?? 0;
@@ -90,8 +82,7 @@ const DietProgress = () => {
   const monthlyAvg =
     dailyValues.length > 0
       ? Math.round(
-          dailyValues.reduce((sum, val) => sum + val, 0) /
-            dailyValues.length
+          dailyValues.reduce((sum, val) => sum + val, 0) / dailyValues.length,
         )
       : 0;
 
@@ -117,9 +108,7 @@ const DietProgress = () => {
       {/* Header */}
       <div className="mb-6">
         <h3 className="text-2xl font-bold">Your Progress</h3>
-        <p className="text-gray-400">
-          Calories, weight, and trends over time
-        </p>
+        <p className="text-gray-400">Calories, weight, and trends over time</p>
       </div>
 
       <div className="space-y-4">
@@ -132,15 +121,11 @@ const DietProgress = () => {
 
           <p className="text-gray-300 text-sm">
             Consumed:{" "}
-            <span className="font-semibold">
-              {todayCalories} kcal
-            </span>
+            <span className="font-semibold">{todayCalories} kcal</span>
           </p>
 
           {todayCalories === 0 && (
-            <p className="text-gray-400 text-sm">
-              No meals logged today
-            </p>
+            <p className="text-gray-400 text-sm">No meals logged today</p>
           )}
         </div>
 
@@ -153,9 +138,7 @@ const DietProgress = () => {
 
           <p className="text-gray-300 text-sm">
             Logged days:{" "}
-            <span className="font-semibold">
-              {weeklyLoggedDays}
-            </span>
+            <span className="font-semibold">{weeklyLoggedDays}</span>
           </p>
 
           <p className="text-gray-400 text-sm">
@@ -163,9 +146,7 @@ const DietProgress = () => {
           </p>
 
           {weeklyLoggedDays === 0 && (
-            <p className="text-gray-400 text-sm">
-              No meals logged this week
-            </p>
+            <p className="text-gray-400 text-sm">No meals logged this week</p>
           )}
         </div>
 
@@ -178,18 +159,14 @@ const DietProgress = () => {
 
           <p className="text-gray-300 text-sm">
             Average per day:{" "}
-            <span className="font-semibold">
-              {monthlyAvg} kcal
-            </span>
+            <span className="font-semibold">{monthlyAvg} kcal</span>
           </p>
 
           <p className="text-gray-400 text-sm">
             Total consumed: {monthlyActual} kcal
           </p>
 
-          <p className="text-gray-400 text-sm">
-            Target: {monthlyTarget} kcal
-          </p>
+          <p className="text-gray-400 text-sm">Target: {monthlyTarget} kcal</p>
 
           {monthlyActual === 0 && (
             <p className="text-gray-400 text-sm">
@@ -211,15 +188,11 @@ const DietProgress = () => {
             </p>
           ) : (
             <>
-              <p className="text-gray-300 text-sm">
-                Start: {startWeight} kg
-              </p>
+              <p className="text-gray-300 text-sm">Start: {startWeight} kg</p>
               <p className="text-gray-300 text-sm">
                 Current: {currentWeight} kg
               </p>
-              <p className="text-gray-400 text-sm">
-                Change: {weightDelta} kg
-              </p>
+              <p className="text-gray-400 text-sm">Change: {weightDelta} kg</p>
             </>
           )}
         </div>
@@ -233,9 +206,7 @@ const DietProgress = () => {
 
           <p className="text-gray-300 text-sm">
             Custom meal calories:{" "}
-            <span className="font-semibold">
-              {customCalories} kcal
-            </span>
+            <span className="font-semibold">{customCalories} kcal</span>
           </p>
 
           {topDays.length > 0 ? (
@@ -252,9 +223,7 @@ const DietProgress = () => {
         </div>
 
         {loading && (
-          <p className="text-gray-500 text-sm">
-            Updating analytics…
-          </p>
+          <p className="text-gray-500 text-sm">Updating analytics…</p>
         )}
       </div>
     </div>

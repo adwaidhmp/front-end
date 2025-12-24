@@ -12,15 +12,20 @@ const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-const sections = [
-  { path: "/home", label: "Home", icon: "🏠", color: "from-purple-600 to-pink-600" },
-  { path: "/home/diet", label: "Diet Plans", icon: "🥗" },
-  { path: "/home/diet-progress", label: "Diet Progress", icon: "📈" },
-  { path: "/home/exercise", label: "Exercises", icon: "💪" },
-  { path: "/home/trainer", label: "Trainers", icon: "👨‍🏫" },
-  { path: "/home/chat-call", label: "Chat & Call", icon: "💬" },
-  { path: "/home/profile", label: "My Profile", icon: "👤" },
-];
+  const sections = [
+    {
+      path: "/home",
+      label: "Home",
+      icon: "🏠",
+      color: "from-purple-600 to-pink-600",
+    },
+    { path: "/home/diet", label: "Diet Plans", icon: "🥗" },
+    { path: "/home/diet-progress", label: "Diet Progress", icon: "📈" },
+    { path: "/home/exercise", label: "Exercises", icon: "💪" },
+    { path: "/home/trainer", label: "Trainers", icon: "👨‍🏫" },
+    { path: "/home/chat-call", label: "Chat & Call", icon: "💬" },
+    { path: "/home/profile", label: "My Profile", icon: "👤" },
+  ];
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -51,10 +56,11 @@ const sections = [
                 <button
                   key={section.id}
                   onClick={() => navigate(section.path)}
-                  className={`px-4 py-2 rounded-xl text-sm transition ${location.pathname === section.path
+                  className={`px-4 py-2 rounded-xl text-sm transition ${
+                    location.pathname === section.path
                       ? `bg-linear-to-r ${section.color}`
                       : "text-gray-400 hover:text-white hover:bg-gray-700/50"
-                    }`}
+                  }`}
                 >
                   <span className="mr-2">{section.icon}</span>
                   {section.label}
@@ -80,15 +86,15 @@ const sections = [
                     navigate(section.path);
                     setMenuOpen(false);
                   }}
-                  className={`px-4 py-3 rounded-xl text-sm transition ${location.pathname === section.path
+                  className={`px-4 py-3 rounded-xl text-sm transition ${
+                    location.pathname === section.path
                       ? `bg-linear-to-r ${section.color} text-white`
                       : "bg-gray-800 text-gray-400 hover:text-white"
-                    }`}
+                  }`}
                 >
                   <span className="text-sm mr-2">{section.icon}</span>
                   {section.label}
                 </button>
-
               ))}
             </div>
           )}
@@ -113,11 +119,8 @@ const sections = [
         <div className="bg-linear-to-br from-gray-900 to-black border border-gray-800 rounded-3xl p-4 sm:p-8">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-lg sm:text-2xl font-bold">
-              {
-                sections.find(
-                  (s) => location.pathname === s.path
-                )?.label || "Diet Plans"
-              }
+              {sections.find((s) => location.pathname === s.path)?.label ||
+                "Diet Plans"}
             </h3>
             <div className="flex gap-2">
               <button className="p-2 bg-gray-800 rounded-lg">

@@ -12,7 +12,7 @@ export const fetchUsers = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to fetch users");
     }
-  }
+  },
 );
 
 export const updateUserStatus = createAsyncThunk(
@@ -26,7 +26,7 @@ export const updateUserStatus = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Status update failed");
     }
-  }
+  },
 );
 
 /* -------------------- TRAINERS -------------------- */
@@ -40,7 +40,7 @@ export const fetchTrainers = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to fetch trainers");
     }
-  }
+  },
 );
 
 export const fetchTrainerDetail = createAsyncThunk(
@@ -52,7 +52,7 @@ export const fetchTrainerDetail = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Failed to fetch trainer");
     }
-  }
+  },
 );
 
 export const approveTrainer = createAsyncThunk(
@@ -64,7 +64,7 @@ export const approveTrainer = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.response?.data || "Approval failed");
     }
-  }
+  },
 );
 
 /* -------------------- SLICE -------------------- */

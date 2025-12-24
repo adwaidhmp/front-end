@@ -10,7 +10,7 @@ const RequireProfile = () => {
   const dispatch = useDispatch();
 
   const { isAuthenticated, loading: authLoading } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const {
@@ -28,13 +28,7 @@ const RequireProfile = () => {
 
   // 1. Not logged in -> go to login
   if (!isAuthenticated && !authLoading) {
-    return (
-      <Navigate
-        to="/login"
-        state={{ from: location }}
-        replace
-      />
-    );
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // 2. While things are loading, block with loader
@@ -56,11 +50,7 @@ const RequireProfile = () => {
   //    But don't redirect if you're already on the form
   if (needsProfileSetup && location.pathname !== PROFILE_FORM_PATH) {
     return (
-      <Navigate
-        to={PROFILE_FORM_PATH}
-        state={{ from: location }}
-        replace
-      />
+      <Navigate to={PROFILE_FORM_PATH} state={{ from: location }} replace />
     );
   }
 

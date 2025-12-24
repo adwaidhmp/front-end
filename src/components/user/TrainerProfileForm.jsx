@@ -2,7 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Loader2, AlertCircle, UploadCloud, FileText, CheckCircle } from "lucide-react";
+import {
+  Loader2,
+  AlertCircle,
+  UploadCloud,
+  FileText,
+  CheckCircle,
+} from "lucide-react";
 import {
   updateTrainerProfile,
   // optional helpers if you have them — safe to remove if not present
@@ -50,9 +56,12 @@ const TrainerProfileForm = () => {
     }
     return {
       bio: trainer.bio || "",
-      specialties: Array.isArray(trainer.specialties) ? trainer.specialties.join(", ") : "",
+      specialties: Array.isArray(trainer.specialties)
+        ? trainer.specialties.join(", ")
+        : "",
       experience_years:
-        trainer.experience_years !== null && trainer.experience_years !== undefined
+        trainer.experience_years !== null &&
+        trainer.experience_years !== undefined
           ? String(trainer.experience_years)
           : "",
     };
@@ -76,7 +85,9 @@ const TrainerProfileForm = () => {
   if (!isAuthenticated) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-black text-white">
-        <p className="text-sm">You must be logged in to manage your trainer profile.</p>
+        <p className="text-sm">
+          You must be logged in to manage your trainer profile.
+        </p>
       </div>
     );
   }
@@ -114,7 +125,10 @@ const TrainerProfileForm = () => {
     // specialties is JSONField on server, better send as JSON string
     const specs = toList(form.specialties);
     fd.append("specialties", JSON.stringify(specs));
-    fd.append("experience_years", form.experience_years ? String(form.experience_years) : "0");
+    fd.append(
+      "experience_years",
+      form.experience_years ? String(form.experience_years) : "0",
+    );
 
     // append files under 'files' (serializer accepts 'file' or 'files'; we send 'files')
     files.forEach((f) => {
@@ -143,7 +157,9 @@ const TrainerProfileForm = () => {
               Profile
             </span>
           </h1>
-          <p className="text-xs text-gray-400">Add your bio, specialties and upload certificates.</p>
+          <p className="text-xs text-gray-400">
+            Add your bio, specialties and upload certificates.
+          </p>
           {uploading && (
             <p className="text-xs text-gray-500 mt-1">Uploading files…</p>
           )}
@@ -154,12 +170,16 @@ const TrainerProfileForm = () => {
             <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 flex items-center gap-2 text-xs">
               <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
               <div className="text-red-200 flex-1">
-                {localError || (typeof error === "object" ? error.detail || JSON.stringify(error) : error)}
+                {localError ||
+                  (typeof error === "object"
+                    ? error.detail || JSON.stringify(error)
+                    : error)}
               </div>
               <button
                 onClick={() => {
                   setLocalError(null);
-                  if (typeof clearTrainerErrors === "function") dispatch(clearTrainerErrors());
+                  if (typeof clearTrainerErrors === "function")
+                    dispatch(clearTrainerErrors());
                 }}
                 className="ml-2 text-red-300 hover:text-white text-sm"
               >
@@ -171,7 +191,9 @@ const TrainerProfileForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Short bio</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Short bio
+            </label>
             <textarea
               name="bio"
               value={form.bio}
@@ -183,7 +205,9 @@ const TrainerProfileForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Specialties (comma separated)</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Specialties (comma separated)
+            </label>
             <input
               type="text"
               name="specialties"
@@ -198,7 +222,9 @@ const TrainerProfileForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Experience (years)</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Experience (years)
+            </label>
             <input
               type="number"
               min="0"
@@ -211,7 +237,9 @@ const TrainerProfileForm = () => {
           </div>
 
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Upload certificate(s)</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Upload certificate(s)
+            </label>
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 cursor-pointer text-xs">
                 <UploadCloud className="w-4 h-4" />
@@ -227,7 +255,9 @@ const TrainerProfileForm = () => {
               </label>
 
               <div className="text-xs text-gray-400">
-                {files.length > 0 ? `${files.length} file(s) selected` : "No files selected"}
+                {files.length > 0
+                  ? `${files.length} file(s) selected`
+                  : "No files selected"}
               </div>
             </div>
             <div className="mt-2 text-xs text-gray-400">
@@ -237,7 +267,9 @@ const TrainerProfileForm = () => {
 
           {/* existing certificates list */}
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Existing certificates</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Existing certificates
+            </label>
             {Array.isArray(certificates) && certificates.length > 0 ? (
               <ul className="space-y-2">
                 {certificates.map((c) => (
@@ -251,13 +283,19 @@ const TrainerProfileForm = () => {
                     >
                       {c.filename}
                     </a>
-                    <span className="text-gray-500 ml-2 text-xs">• {new Date(c.uploaded_at).toLocaleDateString()}</span>
-                    {c.is_latest && <CheckCircle className="w-4 h-4 text-blue-300 ml-2" />}
+                    <span className="text-gray-500 ml-2 text-xs">
+                      • {new Date(c.uploaded_at).toLocaleDateString()}
+                    </span>
+                    {c.is_latest && (
+                      <CheckCircle className="w-4 h-4 text-blue-300 ml-2" />
+                    )}
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="text-xs text-gray-500">No certificates uploaded yet.</div>
+              <div className="text-xs text-gray-500">
+                No certificates uploaded yet.
+              </div>
             )}
           </div>
 

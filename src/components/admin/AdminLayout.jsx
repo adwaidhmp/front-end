@@ -21,7 +21,7 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../redux/user_slices/authSlice"
+import { logoutUser } from "../../redux/user_slices/authSlice";
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -111,9 +111,7 @@ const AdminLayout = () => {
         <div className="p-6 text-center border-b border-gray-200">
           <Title
             level={3}
-            className={`m-0 text-blue-500 ${
-              collapsed ? "truncate" : ""
-            }`}
+            className={`m-0 text-blue-500 ${collapsed ? "truncate" : ""}`}
           >
             {collapsed ? "AD" : "ADMIN PANEL"}
           </Title>
@@ -148,9 +146,7 @@ const AdminLayout = () => {
         <Header className="px-6 bg-white flex items-center justify-between shadow-sm">
           <Button
             type="text"
-            icon={
-              collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
-            }
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
             className="text-base w-16 h-16"
           />

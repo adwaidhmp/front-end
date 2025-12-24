@@ -1,63 +1,68 @@
 // ForgotPasswordConfirm.jsx
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Mail, Loader2, CheckCircle, Eye, EyeOff } from 'lucide-react';
-import { changePassword, requestPasswordChangeOtp } from '../../redux/user_slices/authSlice.jsx';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Lock, Mail, Loader2, CheckCircle, Eye, EyeOff } from "lucide-react";
+import {
+  changePassword,
+  requestPasswordChangeOtp,
+} from "../../redux/user_slices/authSlice.jsx";
 
 const ForgotPasswordConfirm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector(state => state.auth);
-  
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { loading, error } = useSelector((state) => state.auth);
+
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPasswords, setShowPasswords] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !otp || !password || !confirmPassword) {
-      setFormError('All fields are required');
+      setFormError("All fields are required");
       return;
     }
-    
+
     if (password !== confirmPassword) {
-      setFormError('Passwords do not match');
+      setFormError("Passwords do not match");
       return;
     }
-    
+
     if (password.length < 8) {
-      setFormError('Password must be at least 8 characters');
+      setFormError("Password must be at least 8 characters");
       return;
     }
-    
+
     try {
-      await dispatch(changePassword({ 
-        email: email.toLowerCase(), 
-        otp, 
-        new_password: password 
-      })).unwrap();
+      await dispatch(
+        changePassword({
+          email: email.toLowerCase(),
+          otp,
+          new_password: password,
+        }),
+      ).unwrap();
       setIsSuccess(true);
-      setTimeout(() => navigate('/login'), 3000);
+      setTimeout(() => navigate("/login"), 3000);
     } catch {
-      setFormError('');
+      setFormError("");
     }
   };
 
   const handleResendOTP = async () => {
     if (!email) {
-      setFormError('Email is required to resend OTP');
+      setFormError("Email is required to resend OTP");
       return;
     }
-    
+
     try {
       await dispatch(requestPasswordChangeOtp({ email })).unwrap();
-      setFormError('');
+      setFormError("");
     } catch {
       // Error handled by Redux
     }
@@ -70,7 +75,9 @@ const ForgotPasswordConfirm = () => {
           <div className="w-20 h-20 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-400" />
           </div>
-          <h1 className="text-2xl font-bold mb-4">Password Reset Successful!</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            Password Reset Successful!
+          </h1>
           <p className="text-gray-300 mb-6">Redirecting to login...</p>
         </div>
       </div>
@@ -106,11 +113,15 @@ const ForgotPasswordConfirm = () => {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-300 mb-2">OTP (6 digits)</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                OTP (6 digits)
+              </label>
               <input
                 type="text"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="123456"
                 required
@@ -146,13 +157,19 @@ const ForgotPasswordConfirm = () => {
                   onClick={() => setShowPasswords(!showPasswords)}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
                 >
-                  {showPasswords ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPasswords ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-gray-300 mb-2">Confirm Password</label>
+              <label className="block text-sm text-gray-300 mb-2">
+                Confirm Password
+              </label>
               <input
                 type={showPasswords ? "text" : "password"}
                 value={confirmPassword}
@@ -180,14 +197,14 @@ const ForgotPasswordConfirm = () => {
                   Processing...
                 </div>
               ) : (
-                'Reset Password'
+                "Reset Password"
               )}
             </button>
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-800 text-center">
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate("/login")}
               className="text-purple-400 hover:text-purple-300"
             >
               Back to Login

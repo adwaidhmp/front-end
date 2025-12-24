@@ -62,7 +62,7 @@ const TrainerManagement = () => {
       data = data.filter(
         (t) =>
           t.name?.toLowerCase().includes(q) ||
-          t.email?.toLowerCase().includes(q)
+          t.email?.toLowerCase().includes(q),
       );
     }
 
@@ -115,7 +115,10 @@ const TrainerManagement = () => {
       title: "Status",
       dataIndex: "is_approved",
       render: (v) => (
-        <Badge status={v ? "success" : "warning"} text={v ? "Approved" : "Pending"} />
+        <Badge
+          status={v ? "success" : "warning"}
+          text={v ? "Approved" : "Pending"}
+        />
       ),
     },
     {
@@ -155,9 +158,21 @@ const TrainerManagement = () => {
       <Title level={2}>Trainer Management</Title>
 
       <Row gutter={16} className="mb-4">
-        <Col span={8}><Card><Statistic title="Total" value={stats.total} /></Card></Col>
-        <Col span={8}><Card><Statistic title="Approved" value={stats.approved} /></Card></Col>
-        <Col span={8}><Card><Statistic title="Pending" value={stats.pending} /></Card></Col>
+        <Col span={8}>
+          <Card>
+            <Statistic title="Total" value={stats.total} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <Statistic title="Approved" value={stats.approved} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <Statistic title="Pending" value={stats.pending} />
+          </Card>
+        </Col>
       </Row>
 
       <Card>
@@ -200,7 +215,7 @@ const TrainerManagement = () => {
           <Button key="close" onClick={() => setOpen(false)}>
             Close
           </Button>,
-          !trainers.find(t => t.id === selectedTrainerId)?.is_approved && (
+          !trainers.find((t) => t.id === selectedTrainerId)?.is_approved && (
             <Button
               key="approve"
               type="primary"
@@ -224,7 +239,9 @@ const TrainerManagement = () => {
               <Title level={4}>Trainer Profile</Title>
 
               <Badge
-                status={trainerDetail.profile.is_completed ? "success" : "warning"}
+                status={
+                  trainerDetail.profile.is_completed ? "success" : "warning"
+                }
                 text={
                   trainerDetail.profile.is_completed
                     ? "Profile Completed"
@@ -256,7 +273,8 @@ const TrainerManagement = () => {
                       </Descriptions.Item>
 
                       <Descriptions.Item label="Experience (years)">
-                        {trainerDetail.profile.experience_years ?? "Not provided"}
+                        {trainerDetail.profile.experience_years ??
+                          "Not provided"}
                       </Descriptions.Item>
 
                       <Descriptions.Item label="Profile Status">

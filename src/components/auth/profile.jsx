@@ -139,7 +139,7 @@ const ProfilePage = () => {
   // combine profile object for display
   const combined = useMemo(
     () => ({ ...authProfile, ...profileDetails }),
-    [authProfile, profileDetails]
+    [authProfile, profileDetails],
   );
 
   // seed local forms whenever data arrives
@@ -170,7 +170,7 @@ const ProfilePage = () => {
       Object.keys(profileDetails).forEach((k) => {
         if (!(k in seeded)) {
           const v = profileDetails[k];
-          seeded[k] = Array.isArray(v) ? v.join(", ") : v ?? "";
+          seeded[k] = Array.isArray(v) ? v.join(", ") : (v ?? "");
         }
       });
     }
@@ -292,7 +292,7 @@ const ProfilePage = () => {
 
       // call updateUserProfile (profileSlice)
       const updateResult = await dispatch(
-        updateUserProfile(detailPayload)
+        updateUserProfile(detailPayload),
       ).unwrap();
       console.log("Profile updated:", updateResult);
 
@@ -691,8 +691,8 @@ const ProfilePage = () => {
                           cfg.type === "number"
                             ? "number"
                             : cfg.type === "date"
-                            ? "date"
-                            : "text"
+                              ? "date"
+                              : "text"
                         }
                         className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${
                           formErrors[fieldKey]

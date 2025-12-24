@@ -14,10 +14,10 @@ export const fetchApprovedTrainers = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(
-        err.response?.data || "Failed to fetch approved trainers"
+        err.response?.data || "Failed to fetch approved trainers",
       );
     }
-  }
+  },
 );
 
 // book a trainer
@@ -28,11 +28,9 @@ export const bookTrainer = createAsyncThunk(
       const res = await api.post(`trainers/${trainerUserId}/book/`);
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data || "Failed to book trainer"
-      );
+      return rejectWithValue(err.response?.data || "Failed to book trainer");
     }
-  }
+  },
 );
 
 // fetch all trainers user ever booked
@@ -44,10 +42,10 @@ export const fetchMyTrainers = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(
-        err.response?.data || "Failed to fetch my trainers"
+        err.response?.data || "Failed to fetch my trainers",
       );
     }
-  }
+  },
 );
 
 // remove current trainer
@@ -58,11 +56,9 @@ export const removeTrainer = createAsyncThunk(
       const res = await api.delete("trainers/remove/");
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data || "Failed to remove trainer"
-      );
+      return rejectWithValue(err.response?.data || "Failed to remove trainer");
     }
-  }
+  },
 );
 
 /* -------------------------------------------
@@ -117,9 +113,7 @@ const trainerBookingSlice = createSlice({
       .addCase(bookTrainer.rejected, (state, action) => {
         state.loading = false;
         state.error =
-          action.payload?.detail ||
-          action.payload ||
-          "Booking failed";
+          action.payload?.detail || action.payload || "Booking failed";
       })
 
       // FETCH MY TRAINERS
@@ -153,9 +147,7 @@ const trainerBookingSlice = createSlice({
   },
 });
 
-export const {
-  clearTrainerState,
-  clearApprovedTrainers,
-} = trainerBookingSlice.actions;
+export const { clearTrainerState, clearApprovedTrainers } =
+  trainerBookingSlice.actions;
 
 export default trainerBookingSlice.reducer;

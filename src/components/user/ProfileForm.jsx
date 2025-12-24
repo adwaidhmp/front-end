@@ -65,7 +65,8 @@ const ProfileForm = () => {
     gender: (choices && choices.gender) || FALLBACK.gender,
     goal: (choices && choices.goal) || FALLBACK.goal,
     body_type: (choices && choices.body_type) || FALLBACK.body_type,
-    activity_level: (choices && choices.activity_level) || FALLBACK.activity_level,
+    activity_level:
+      (choices && choices.activity_level) || FALLBACK.activity_level,
     exercise_experience:
       (choices && choices.exercise_experience) || FALLBACK.exercise_experience,
   };
@@ -78,7 +79,7 @@ const ProfileForm = () => {
         gender: "",
         height_cm: "",
         weight_kg: "",
-        target_weight_kg:"",
+        target_weight_kg: "",
         goal: "",
         body_type: "",
         activity_level: "",
@@ -103,7 +104,8 @@ const ProfileForm = () => {
           ? String(profile.weight_kg)
           : "",
       target_weight_kg:
-        profile.target_weight_kg !== null && profile.target_weight_kg !== undefined
+        profile.target_weight_kg !== null &&
+        profile.target_weight_kg !== undefined
           ? String(profile.target_weight_kg)
           : "",
       goal: profile.goal || "",
@@ -138,7 +140,9 @@ const ProfileForm = () => {
   if (!isAuthenticated) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-black text-white">
-        <p className="text-sm">You must be logged in to complete your profile.</p>
+        <p className="text-sm">
+          You must be logged in to complete your profile.
+        </p>
       </div>
     );
   }
@@ -165,7 +169,9 @@ const ProfileForm = () => {
       gender: form.gender || null,
       height_cm: form.height_cm ? parseFloat(form.height_cm) : null,
       weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
-      target_weight_kg: form.target_weight_kg ? parseFloat(form.target_weight_kg) : null,
+      target_weight_kg: form.target_weight_kg
+        ? parseFloat(form.target_weight_kg)
+        : null,
       goal: form.goal || null,
       body_type: form.body_type || "",
       activity_level: form.activity_level || null,
@@ -208,13 +214,16 @@ const ProfileForm = () => {
             </span>
           </h1>
           <p className="text-xs text-gray-400">
-            These details are required for accurate AI workouts and nutrition predictions.
+            These details are required for accurate AI workouts and nutrition
+            predictions.
           </p>
           {choicesLoading && (
             <p className="text-xs text-gray-500 mt-1">Loading choices…</p>
           )}
           {choicesError && (
-            <p className="text-xs text-yellow-300 mt-1">Could not load choices, using defaults.</p>
+            <p className="text-xs text-yellow-300 mt-1">
+              Could not load choices, using defaults.
+            </p>
           )}
         </div>
 
@@ -223,9 +232,13 @@ const ProfileForm = () => {
             <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-3 flex items-center gap-2 text-xs">
               <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
               <div className="text-red-200 flex-1">
-                {typeof error === "object" ? error.detail || JSON.stringify(error) : error}
+                {typeof error === "object"
+                  ? error.detail || JSON.stringify(error)
+                  : error}
                 {Array.isArray(missingFields) && missingFields.length > 0 && (
-                  <div className="mt-1 text-red-300">Missing: {missingFields.join(", ")}</div>
+                  <div className="mt-1 text-red-300">
+                    Missing: {missingFields.join(", ")}
+                  </div>
                 )}
               </div>
               <button
@@ -243,7 +256,8 @@ const ProfileForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Date of Birth {isMissing("dob") && <span className="text-red-400">*</span>}
+                Date of Birth{" "}
+                {isMissing("dob") && <span className="text-red-400">*</span>}
               </label>
               <input
                 type="date"
@@ -258,7 +272,8 @@ const ProfileForm = () => {
 
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Gender {isMissing("gender") && <span className="text-red-400">*</span>}
+                Gender{" "}
+                {isMissing("gender") && <span className="text-red-400">*</span>}
               </label>
               <select
                 name="gender"
@@ -282,7 +297,10 @@ const ProfileForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Height (cm) {isMissing("height_cm") && <span className="text-red-400">*</span>}
+                Height (cm){" "}
+                {isMissing("height_cm") && (
+                  <span className="text-red-400">*</span>
+                )}
               </label>
               <input
                 type="number"
@@ -295,27 +313,33 @@ const ProfileForm = () => {
                 } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
               />
               <div>
-              <label className="block mb-1 text-gray-300 text-xs">
-                Target Weight (kg) {isMissing("target_weight_kg") && (
-                  <span className="text-red-400">*</span>
-                )}
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                name="target_weight_kg"
-                value={form.target_weight_kg}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${
-                  isMissing("target_weight_kg") ? "border-red-500" : "border-gray-700"
-                } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
-              />
-            </div>
+                <label className="block mb-1 text-gray-300 text-xs">
+                  Target Weight (kg){" "}
+                  {isMissing("target_weight_kg") && (
+                    <span className="text-red-400">*</span>
+                  )}
+                </label>
+                <input
+                  type="number"
+                  step="0.1"
+                  name="target_weight_kg"
+                  value={form.target_weight_kg}
+                  onChange={handleChange}
+                  className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${
+                    isMissing("target_weight_kg")
+                      ? "border-red-500"
+                      : "border-gray-700"
+                  } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
+                />
+              </div>
             </div>
 
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Weight (kg) {isMissing("weight_kg") && <span className="text-red-400">*</span>}
+                Weight (kg){" "}
+                {isMissing("weight_kg") && (
+                  <span className="text-red-400">*</span>
+                )}
               </label>
               <input
                 type="number"
@@ -334,7 +358,8 @@ const ProfileForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Primary Goal {isMissing("goal") && <span className="text-red-400">*</span>}
+                Primary Goal{" "}
+                {isMissing("goal") && <span className="text-red-400">*</span>}
               </label>
               <select
                 name="goal"
@@ -354,7 +379,9 @@ const ProfileForm = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-gray-300 text-xs">Body Type (optional)</label>
+              <label className="block mb-1 text-gray-300 text-xs">
+                Body Type (optional)
+              </label>
               <select
                 name="body_type"
                 value={form.body_type}
@@ -374,14 +401,19 @@ const ProfileForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Activity Level {isMissing("activity_level") && <span className="text-red-400">*</span>}
+                Activity Level{" "}
+                {isMissing("activity_level") && (
+                  <span className="text-red-400">*</span>
+                )}
               </label>
               <select
                 name="activity_level"
                 value={form.activity_level}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${
-                  isMissing("activity_level") ? "border-red-500" : "border-gray-700"
+                  isMissing("activity_level")
+                    ? "border-red-500"
+                    : "border-gray-700"
                 } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
               >
                 <option value="">Select activity level</option>
@@ -395,14 +427,19 @@ const ProfileForm = () => {
 
             <div>
               <label className="block mb-1 text-gray-300 text-xs">
-                Exercise Experience {isMissing("exercise_experience") && <span className="text-red-400">*</span>}
+                Exercise Experience{" "}
+                {isMissing("exercise_experience") && (
+                  <span className="text-red-400">*</span>
+                )}
               </label>
               <select
                 name="exercise_experience"
                 value={form.exercise_experience}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${
-                  isMissing("exercise_experience") ? "border-red-500" : "border-gray-700"
+                  isMissing("exercise_experience")
+                    ? "border-red-500"
+                    : "border-gray-700"
                 } focus:outline-none focus:ring-2 focus:ring-purple-500/40`}
               >
                 <option value="">Select experience</option>
@@ -417,7 +454,9 @@ const ProfileForm = () => {
 
           {/* diet constraints */}
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Diet Constraints / Preferences (optional)</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Diet Constraints / Preferences (optional)
+            </label>
             <textarea
               name="diet_constraints"
               value={form.diet_constraints}
@@ -431,7 +470,9 @@ const ProfileForm = () => {
           {/* allergies + medical_conditions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 text-gray-300 text-xs">Allergies (comma separated)</label>
+              <label className="block mb-1 text-gray-300 text-xs">
+                Allergies (comma separated)
+              </label>
               <input
                 type="text"
                 name="allergies"
@@ -443,7 +484,9 @@ const ProfileForm = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-gray-300 text-xs">Medical Conditions (comma separated)</label>
+              <label className="block mb-1 text-gray-300 text-xs">
+                Medical Conditions (comma separated)
+              </label>
               <input
                 type="text"
                 name="medical_conditions"
@@ -458,7 +501,9 @@ const ProfileForm = () => {
           {/* supplements + equipment */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 text-gray-300 text-xs">Supplements (comma separated)</label>
+              <label className="block mb-1 text-gray-300 text-xs">
+                Supplements (comma separated)
+              </label>
               <input
                 type="text"
                 name="supplements"
@@ -470,7 +515,9 @@ const ProfileForm = () => {
             </div>
 
             <div>
-              <label className="block mb-1 text-gray-300 text-xs">Available Equipment (comma separated)</label>
+              <label className="block mb-1 text-gray-300 text-xs">
+                Available Equipment (comma separated)
+              </label>
               <input
                 type="text"
                 name="preferred_equipment"
@@ -484,7 +531,9 @@ const ProfileForm = () => {
 
           {/* notes */}
           <div>
-            <label className="block mb-1 text-gray-300 text-xs">Notes for coach / AI (optional)</label>
+            <label className="block mb-1 text-gray-300 text-xs">
+              Notes for coach / AI (optional)
+            </label>
             <textarea
               name="notes"
               value={form.notes}

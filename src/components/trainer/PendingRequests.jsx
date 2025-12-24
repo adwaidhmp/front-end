@@ -17,11 +17,9 @@ import {
 const PendingRequests = () => {
   const dispatch = useDispatch();
 
-  const {
-    pendingClients,
-    loading,
-    error,
-  } = useSelector((state) => state.trainerBookingApproval);
+  const { pendingClients, loading, error } = useSelector(
+    (state) => state.trainerBookingApproval,
+  );
 
   useEffect(() => {
     dispatch(fetchPendingClients());
@@ -36,7 +34,7 @@ const PendingRequests = () => {
       decideUserBooking({
         bookingId,
         action, // "approve" | "reject"
-      })
+      }),
     );
   };
 
@@ -54,21 +52,13 @@ const PendingRequests = () => {
         </div>
       )}
 
-      {error && (
-        <div className="text-center py-12 text-red-400">
-          {error}
-        </div>
-      )}
+      {error && <div className="text-center py-12 text-red-400">{error}</div>}
 
       {!loading && pendingClients.length === 0 && !error ? (
         <div className="text-center py-12">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h4 className="text-xl font-semibold mb-2">
-            No Pending Requests
-          </h4>
-          <p className="text-gray-400">
-            All requests have been processed
-          </p>
+          <h4 className="text-xl font-semibold mb-2">No Pending Requests</h4>
+          <p className="text-gray-400">All requests have been processed</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,9 +104,7 @@ const PendingRequests = () => {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() =>
-                    handleDecision(request.booking_id, "approve")
-                  }
+                  onClick={() => handleDecision(request.booking_id, "approve")}
                   disabled={loading}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors disabled:opacity-50"
                 >
@@ -125,9 +113,7 @@ const PendingRequests = () => {
                 </button>
 
                 <button
-                  onClick={() =>
-                    handleDecision(request.booking_id, "reject")
-                  }
+                  onClick={() => handleDecision(request.booking_id, "reject")}
                   disabled={loading}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-colors disabled:opacity-50"
                 >

@@ -33,7 +33,7 @@ export const requestOtp = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 1b. Request OTP for password reset (new backend URL)
@@ -48,7 +48,7 @@ export const requestPasswordResetOtp = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 2. Register User
@@ -61,7 +61,7 @@ export const registerUser = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 3. Register Trainer
@@ -74,7 +74,7 @@ export const registerTrainer = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 4. Login with Email + Password
@@ -84,13 +84,13 @@ export const loginUser = createAsyncThunk(
     try {
       const res = await api.post(`login/`, payload);
       const { access, refresh, user } = res.data;
-      console.log(user)
+      console.log(user);
       saveTokens(access, refresh);
       return { user, access, refresh };
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 5. Google login (id_token from client)
@@ -105,7 +105,7 @@ export const googleLogin = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 6. Fetch profile
@@ -119,7 +119,7 @@ export const fetchProfile = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 6b. Edit profile (new backend URL)
@@ -136,7 +136,7 @@ export const editProfile = createAsyncThunk(
       // but we'll just return the error here.
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 // 7. Logout user (calls backend, sends refresh if backend expects it)
@@ -154,9 +154,8 @@ export const logoutUser = createAsyncThunk(
       clearTokens();
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
-
 
 export const requestPasswordChangeOtp = createAsyncThunk(
   "auth/requestPasswordChangeOtp",
@@ -169,7 +168,7 @@ export const requestPasswordChangeOtp = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
 
 export const changePassword = createAsyncThunk(
@@ -183,10 +182,8 @@ export const changePassword = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(makeErr(err));
     }
-  }
+  },
 );
-
-
 
 // ---- Slice ----
 const initialState = {

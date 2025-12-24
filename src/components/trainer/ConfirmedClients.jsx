@@ -18,7 +18,7 @@ import {
 const ConfirmedClients = () => {
   const dispatch = useDispatch();
   const { approvedUsers, loading, error } = useSelector(
-    (state) => state.trainerBookingApproval
+    (state) => state.trainerBookingApproval,
   );
 
   const [selectedUser, setSelectedUser] = useState(null);
@@ -192,10 +192,7 @@ const ConfirmedClients = () => {
             {/* MESSAGES */}
             <div className="flex-1 overflow-y-auto p-4">
               {(messagesMap[selectedUser.booking_id] || []).map((msg) => (
-                <div
-                  key={msg.id}
-                  className="mb-3 flex justify-end"
-                >
+                <div key={msg.id} className="mb-3 flex justify-end">
                   <div className="p-3 rounded-xl max-w-md bg-blue-600 text-white">
                     {msg.text}
                   </div>

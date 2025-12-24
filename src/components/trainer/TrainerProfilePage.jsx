@@ -63,8 +63,11 @@ const TrainerProfilePage = () => {
   const navigate = useNavigate();
 
   // auth slice (to guard access / show name/email)
-  const { isAuthenticated, loading: authLoading, user: _authUser } =
-    useSelector((s) => s.auth);
+  const {
+    isAuthenticated,
+    loading: authLoading,
+    user: _authUser,
+  } = useSelector((s) => s.auth);
 
   // trainer slice
   const { trainerInfo, profile, loadingTrainerInfo, loadingProfile, error } =
@@ -88,7 +91,7 @@ const TrainerProfilePage = () => {
 
   const combined = useMemo(
     () => ({ ...(trainerInfo || {}), ...(profile || {}) }),
-    [trainerInfo, profile]
+    [trainerInfo, profile],
   );
 
   // seed forms when data arrives
@@ -118,7 +121,7 @@ const TrainerProfilePage = () => {
     setNewCertificates([]);
     setRemovedCertIds([]);
     setFormErrors({});
-  }, [trainerInfo, profile]);
+  }, [trainerInfo, profile, combined]);
 
   // fetch on mount
   useEffect(() => {
@@ -284,9 +287,15 @@ const TrainerProfilePage = () => {
               <User className="w-10 h-10 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold">{combined?.name || "Trainer"}</h3>
-              <p className="text-xs text-gray-400">{combined?.email || "No email"}</p>
-              <p className="text-xs text-gray-400 mt-1">{combined?.is_approved ? "Approved" : "Pending approval"}</p>
+              <h3 className="text-lg font-semibold">
+                {combined?.name || "Trainer"}
+              </h3>
+              <p className="text-xs text-gray-400">
+                {combined?.email || "No email"}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                {combined?.is_approved ? "Approved" : "Pending approval"}
+              </p>
             </div>
           </div>
 
@@ -340,11 +349,19 @@ const TrainerProfilePage = () => {
             </div>
             <div className="flex justify-between">
               <span>Status</span>
-              <span className={`${combined?.is_active ? "text-green-400" : "text-red-400"} font-semibold`}>{combined?.is_active ? "Active" : "Inactive"}</span>
+              <span
+                className={`${combined?.is_active ? "text-green-400" : "text-red-400"} font-semibold`}
+              >
+                {combined?.is_active ? "Active" : "Inactive"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Approved</span>
-              <span className={`${combined?.is_approved ? "text-green-400" : "text-yellow-400"} font-semibold`}>{combined?.is_approved ? "Yes" : "No"}</span>
+              <span
+                className={`${combined?.is_approved ? "text-green-400" : "text-yellow-400"} font-semibold`}
+              >
+                {combined?.is_approved ? "Yes" : "No"}
+              </span>
             </div>
           </div>
         </aside>
@@ -360,23 +377,42 @@ const TrainerProfilePage = () => {
                     <User className="w-6 h-6 text-purple-400" />
                     Basic Info
                   </h2>
-                  <p className="text-xs text-gray-400 mt-1">Name, email and phone. Email is read-only.</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Name, email and phone. Email is read-only.
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2">
                   {!isEditingInfo ? (
-                    <button onClick={toggleEditInfo} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl">
+                    <button
+                      onClick={toggleEditInfo}
+                      className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl"
+                    >
                       <Edit className="w-4 h-4" />
                       Edit
                     </button>
                   ) : (
                     <>
-                      <button onClick={() => { setIsEditingInfo(false); setFormErrors({}); }} className="flex items-center gap-2 px-4 py-2 bg-gray-700 rounded-xl">
+                      <button
+                        onClick={() => {
+                          setIsEditingInfo(false);
+                          setFormErrors({});
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-700 rounded-xl"
+                      >
                         <X className="w-4 h-4" />
                         Cancel
                       </button>
-                      <button onClick={handleSaveInfo} disabled={isSaving} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-600 to-emerald-600 rounded-xl">
-                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      <button
+                        onClick={handleSaveInfo}
+                        disabled={isSaving}
+                        className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-600 to-emerald-600 rounded-xl"
+                      >
+                        {isSaving ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Save className="w-4 h-4" />
+                        )}
                         Save
                       </button>
                     </>
@@ -391,15 +427,21 @@ const TrainerProfilePage = () => {
                   if (!isEditingInfo) {
                     return (
                       <div key={k}>
-                        <label className="text-xs text-gray-400 block mb-1">{cfg.label}</label>
-                        <p className="font-semibold">{trainerInfo?.[k] ?? combined?.[k] ?? "Not set"}</p>
+                        <label className="text-xs text-gray-400 block mb-1">
+                          {cfg.label}
+                        </label>
+                        <p className="font-semibold">
+                          {trainerInfo?.[k] ?? combined?.[k] ?? "Not set"}
+                        </p>
                       </div>
                     );
                   }
 
                   return (
                     <div key={k}>
-                      <label className="text-xs text-gray-400 block mb-1">{cfg.label}</label>
+                      <label className="text-xs text-gray-400 block mb-1">
+                        {cfg.label}
+                      </label>
                       <input
                         name={k}
                         value={val}
@@ -407,7 +449,11 @@ const TrainerProfilePage = () => {
                         readOnly={cfg.readOnly}
                         className={`w-full px-4 py-2 rounded-lg bg-gray-800 border ${formErrors[k] ? "border-red-500" : "border-gray-700"}`}
                       />
-                      {formErrors[k] && <p className="text-red-400 text-xs mt-1">{formErrors[k]}</p>}
+                      {formErrors[k] && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {formErrors[k]}
+                        </p>
+                      )}
                     </div>
                   );
                 })}
@@ -424,23 +470,43 @@ const TrainerProfilePage = () => {
                     <Briefcase className="w-6 h-6 text-purple-400" />
                     Trainer Profile
                   </h2>
-                  <p className="text-xs text-gray-400 mt-1">Bio, specialties, experience, hourly rate and certifications.</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Bio, specialties, experience, hourly rate and
+                    certifications.
+                  </p>
                 </div>
 
                 <div className="flex items-center gap-2">
                   {!isEditingProfile ? (
-                    <button onClick={toggleEditProfile} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl">
+                    <button
+                      onClick={toggleEditProfile}
+                      className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl"
+                    >
                       <Edit className="w-4 h-4" />
                       Edit
                     </button>
                   ) : (
                     <>
-                      <button onClick={() => { setIsEditingProfile(false); setFormErrors({}); }} className="flex items-center gap-2 px-4 py-2 bg-gray-700 rounded-xl">
+                      <button
+                        onClick={() => {
+                          setIsEditingProfile(false);
+                          setFormErrors({});
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-700 rounded-xl"
+                      >
                         <X className="w-4 h-4" />
                         Cancel
                       </button>
-                      <button onClick={handleSaveProfile} disabled={isSaving} className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-600 to-emerald-600 rounded-xl">
-                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      <button
+                        onClick={handleSaveProfile}
+                        disabled={isSaving}
+                        className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-600 to-emerald-600 rounded-xl"
+                      >
+                        {isSaving ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Save className="w-4 h-4" />
+                        )}
                         Save
                       </button>
                     </>
@@ -456,17 +522,37 @@ const TrainerProfilePage = () => {
 
                   // show certificate thumbnails in read-only view
                   if (!isEditingProfile && fieldKey === "certificates") {
-                    const certs = Array.isArray(displayValue) ? displayValue : [];
+                    const certs = Array.isArray(displayValue)
+                      ? displayValue
+                      : [];
                     return (
                       <div key={fieldKey} className="col-span-full">
-                        <label className="text-xs text-gray-400 block mb-1">{cfg.label}</label>
+                        <label className="text-xs text-gray-400 block mb-1">
+                          {cfg.label}
+                        </label>
                         <div className="flex flex-wrap gap-3">
-                          {certs.length ? certs.map((c) => (
-                            <a key={c.id} href={c.file_url || '#'} target="_blank" rel="noreferrer" className="block w-40">
-                              <img src={c.file_url} alt={c.filename || 'certificate'} className="w-full h-28 object-cover rounded-lg border border-gray-700" />
-                              <div className="text-xs truncate mt-1 text-gray-300">{c.filename}</div>
-                            </a>
-                          )) : <div className="text-xs text-gray-400">Not set</div>}
+                          {certs.length ? (
+                            certs.map((c) => (
+                              <a
+                                key={c.id}
+                                href={c.file_url || "#"}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block w-40"
+                              >
+                                <img
+                                  src={c.file_url}
+                                  alt={c.filename || "certificate"}
+                                  className="w-full h-28 object-cover rounded-lg border border-gray-700"
+                                />
+                                <div className="text-xs truncate mt-1 text-gray-300">
+                                  {c.filename}
+                                </div>
+                              </a>
+                            ))
+                          ) : (
+                            <div className="text-xs text-gray-400">Not set</div>
+                          )}
                         </div>
                       </div>
                     );
@@ -484,15 +570,24 @@ const TrainerProfilePage = () => {
 
                     // certificates: show filenames or count
                     if (fieldKey === "certificates") {
-                      const certs = Array.isArray(displayValue) ? displayValue : [];
+                      const certs = Array.isArray(displayValue)
+                        ? displayValue
+                        : [];
                       shown = certs.length
-                        ? certs.map((c) => c.filename || c.file_url || "Certificate").join(", ")
+                        ? certs
+                            .map(
+                              (c) => c.filename || c.file_url || "Certificate",
+                            )
+                            .join(", ")
                         : "Not set";
                     }
 
-                    if (cfg.type === "number") shown = displayValue ?? "Not set";
-                    if (cfg.type === "textarea") shown = displayValue || "Not set";
-                    if (shown === null || shown === undefined || shown === "") shown = "Not set";
+                    if (cfg.type === "number")
+                      shown = displayValue ?? "Not set";
+                    if (cfg.type === "textarea")
+                      shown = displayValue || "Not set";
+                    if (shown === null || shown === undefined || shown === "")
+                      shown = "Not set";
 
                     return (
                       <div key={fieldKey} className="flex items-start gap-3">
@@ -511,9 +606,21 @@ const TrainerProfilePage = () => {
                   if (cfg.type === "textarea") {
                     return (
                       <div key={fieldKey}>
-                        <label className="text-xs text-gray-400 block mb-1">{cfg.label}</label>
-                        <textarea name={fieldKey} rows={3} value={formValue} onChange={handleProfileChange} className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-xs" />
-                        {formErrors[fieldKey] && <p className="text-red-400 text-xs mt-1">{formErrors[fieldKey]}</p>}
+                        <label className="text-xs text-gray-400 block mb-1">
+                          {cfg.label}
+                        </label>
+                        <textarea
+                          name={fieldKey}
+                          rows={3}
+                          value={formValue}
+                          onChange={handleProfileChange}
+                          className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-xs"
+                        />
+                        {formErrors[fieldKey] && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {formErrors[fieldKey]}
+                          </p>
+                        )}
                       </div>
                     );
                   }
@@ -522,20 +629,37 @@ const TrainerProfilePage = () => {
                   if (cfg.type === "file" && fieldKey === "certificates") {
                     return (
                       <div key={fieldKey} className="col-span-full">
-                        <label className="text-xs text-gray-400 block mb-1">{cfg.label}</label>
+                        <label className="text-xs text-gray-400 block mb-1">
+                          {cfg.label}
+                        </label>
 
                         {/* existing certificates list with remove toggle */}
                         <div className="space-y-2 mb-3">
                           {(profile?.certificates || []).map((c) => {
                             const isRemoved = removedCertIds.includes(c.id);
                             return (
-                              <div key={c.id} className="flex items-center justify-between bg-gray-800 px-3 py-2 rounded-lg">
+                              <div
+                                key={c.id}
+                                className="flex items-center justify-between bg-gray-800 px-3 py-2 rounded-lg"
+                              >
                                 <div>
-                                  <div className="font-semibold">{c.filename || c.file_url || "Certificate"}</div>
-                                  <a href={c.file_url || '#'} target="_blank" rel="noreferrer" className="text-xs text-blue-300 underline">View file</a>
+                                  <div className="font-semibold">
+                                    {c.filename || c.file_url || "Certificate"}
+                                  </div>
+                                  <a
+                                    href={c.file_url || "#"}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-xs text-blue-300 underline"
+                                  >
+                                    View file
+                                  </a>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <button onClick={() => markRemoveCert(c.id)} className={`px-3 py-1 rounded text-xs ${isRemoved ? "bg-red-600 text-white" : "bg-gray-700 text-gray-200"}`}>
+                                  <button
+                                    onClick={() => markRemoveCert(c.id)}
+                                    className={`px-3 py-1 rounded text-xs ${isRemoved ? "bg-red-600 text-white" : "bg-gray-700 text-gray-200"}`}
+                                  >
                                     {isRemoved ? "Undo remove" : "Remove"}
                                   </button>
                                 </div>
@@ -546,14 +670,32 @@ const TrainerProfilePage = () => {
 
                         {/* new files */}
                         <div className="mb-2">
-                          <input type="file" accept=".pdf,.jpg,.png" multiple onChange={handleCertFiles} className="w-full" />
+                          <input
+                            type="file"
+                            accept=".pdf,.jpg,.png"
+                            multiple
+                            onChange={handleCertFiles}
+                            className="w-full"
+                          />
                           {newCertificates.length > 0 && (
                             <div className="mt-2 space-y-1 text-xs">
                               {newCertificates.map((f, i) => (
-                                <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-gray-800 px-3 py-2 rounded">
+                                <div
+                                  key={`${f.name}-${i}`}
+                                  className="flex items-center justify-between bg-gray-800 px-3 py-2 rounded"
+                                >
                                   <div className="truncate">{f.name}</div>
                                   <div className="flex gap-2">
-                                    <button onClick={() => setNewCertificates((p) => p.filter((_, idx) => idx !== i))} className="px-2 py-1 text-xs bg-gray-700 rounded">Remove</button>
+                                    <button
+                                      onClick={() =>
+                                        setNewCertificates((p) =>
+                                          p.filter((_, idx) => idx !== i),
+                                        )
+                                      }
+                                      className="px-2 py-1 text-xs bg-gray-700 rounded"
+                                    >
+                                      Remove
+                                    </button>
                                   </div>
                                 </div>
                               ))}
@@ -561,7 +703,11 @@ const TrainerProfilePage = () => {
                           )}
                         </div>
 
-                        {formErrors[fieldKey] && <p className="text-red-400 text-xs mt-1">{formErrors[fieldKey]}</p>}
+                        {formErrors[fieldKey] && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {formErrors[fieldKey]}
+                          </p>
+                        )}
                       </div>
                     );
                   }
@@ -569,9 +715,21 @@ const TrainerProfilePage = () => {
                   // default number/text
                   return (
                     <div key={fieldKey}>
-                      <label className="text-xs text-gray-400 block mb-1">{cfg.label}</label>
-                      <input name={fieldKey} value={formValue} onChange={handleProfileChange} type={cfg.type === "number" ? "number" : "text"} className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${formErrors[fieldKey] ? "border-red-500" : "border-gray-700"} text-xs`} />
-                      {formErrors[fieldKey] && <p className="text-red-400 text-xs mt-1">{formErrors[fieldKey]}</p>}
+                      <label className="text-xs text-gray-400 block mb-1">
+                        {cfg.label}
+                      </label>
+                      <input
+                        name={fieldKey}
+                        value={formValue}
+                        onChange={handleProfileChange}
+                        type={cfg.type === "number" ? "number" : "text"}
+                        className={`w-full px-3 py-2 rounded-lg bg-gray-800 border ${formErrors[fieldKey] ? "border-red-500" : "border-gray-700"} text-xs`}
+                      />
+                      {formErrors[fieldKey] && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {formErrors[fieldKey]}
+                        </p>
+                      )}
                     </div>
                   );
                 })}
@@ -588,9 +746,16 @@ const TrainerProfilePage = () => {
             <AlertCircle className="w-5 h-5 text-red-400" />
             <div>
               <div className="font-semibold">Trainer Profile Error</div>
-              <div className="text-red-200">{typeof _error === "string" ? _error : JSON.stringify(_error)}</div>
+              <div className="text-red-200">
+                {typeof _error === "string" ? _error : JSON.stringify(_error)}
+              </div>
               <div className="mt-2">
-                <button onClick={() => dispatch(clearTrainerErrors())} className="text-xs text-red-300 underline">Dismiss</button>
+                <button
+                  onClick={() => dispatch(clearTrainerErrors())}
+                  className="text-xs text-red-300 underline"
+                >
+                  Dismiss
+                </button>
               </div>
             </div>
           </div>

@@ -14,10 +14,10 @@ export const fetchPendingClients = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(
-        err.response?.data?.detail || "Failed to fetch pending clients"
+        err.response?.data?.detail || "Failed to fetch pending clients",
       );
     }
-  }
+  },
 );
 
 // 2. Approve a booking
@@ -27,16 +27,16 @@ export const decideUserBooking = createAsyncThunk(
     try {
       const res = await api.post(
         `bookings/${bookingId}/decison/`,
-        { action } // approve | reject
+        { action }, // approve | reject
       );
 
       return { bookingId, action, data: res.data };
     } catch (err) {
       return rejectWithValue(
-        err.response?.data?.detail || "Booking decision failed"
+        err.response?.data?.detail || "Booking decision failed",
       );
     }
-  }
+  },
 );
 
 // 3. Fetch approved users
@@ -48,10 +48,10 @@ export const fetchApprovedUsers = createAsyncThunk(
       return res.data;
     } catch (err) {
       return rejectWithValue(
-        err.response?.data?.detail || "Failed to fetch approved users"
+        err.response?.data?.detail || "Failed to fetch approved users",
       );
     }
-  }
+  },
 );
 
 /* ============================
@@ -105,7 +105,7 @@ const trainerBookingApprovalSlice = createSlice({
 
         // Always remove from pending list
         state.pendingClients = state.pendingClients.filter(
-          (b) => b.booking_id !== bookingId
+          (b) => b.booking_id !== bookingId,
         );
 
         // If approved, optionally push into approvedUsers

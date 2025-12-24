@@ -25,7 +25,7 @@ import {
 const TrainerChat = () => {
   const dispatch = useDispatch();
   const { myTrainers, loading, error } = useSelector(
-    (state) => state.trainerBooking
+    (state) => state.trainerBooking,
   );
 
   const [selectedTrainer, setSelectedTrainer] = useState(null);
@@ -101,27 +101,27 @@ const TrainerChat = () => {
     return "bg-gray-500";
   };
 
-const getStatusText = (status) => {
-  switch (status) {
-    case "approved":
-      return "Active";
-    case "pending":
-      return "Pending";
-    case "cancelled":
-      return "Removed";
-    case "rejected":
-      return "Rejected";
-    default:
-      return status; 
-  }
-};
+  const getStatusText = (status) => {
+    switch (status) {
+      case "approved":
+        return "Active";
+      case "pending":
+        return "Pending";
+      case "cancelled":
+        return "Removed";
+      case "rejected":
+        return "Rejected";
+      default:
+        return status;
+    }
+  };
 
-const filteredTrainers = myTrainers.filter((trainer) => {
-  if (!searchTerm.trim()) return true;
+  const filteredTrainers = myTrainers.filter((trainer) => {
+    if (!searchTerm.trim()) return true;
 
-  const name = trainer.trainer_name || "trainer";
-  return name.toLowerCase().includes(searchTerm.toLowerCase());
-});
+    const name = trainer.trainer_name || "trainer";
+    return name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   if (loading)
     return (
@@ -183,7 +183,7 @@ const filteredTrainers = myTrainers.filter((trainer) => {
                     </h3>
                     <span
                       className={`inline-block mt-1 text-xs px-2 py-1 rounded-full ${getStatusColor(
-                        trainer.status
+                        trainer.status,
                       )}`}
                     >
                       {getStatusText(trainer.status)}
@@ -261,9 +261,7 @@ const filteredTrainers = myTrainers.filter((trainer) => {
                   <div
                     key={msg.id}
                     className={`mb-3 flex ${
-                      msg.sender === "user"
-                        ? "justify-end"
-                        : "justify-start"
+                      msg.sender === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
                     <div
@@ -285,7 +283,7 @@ const filteredTrainers = myTrainers.filter((trainer) => {
                       </div>
                     </div>
                   </div>
-                )
+                ),
               )}
               <div ref={messagesEndRef} />
             </div>
