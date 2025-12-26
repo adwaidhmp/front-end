@@ -5,10 +5,6 @@ import api from "../../api2.jsx";
    THUNKS
 ============================ */
 
-/**
- * Daily analytics
- * GET /diet/analytics/daily/?date=YYYY-MM-DD
- */
 export const fetchDailyAnalytics = createAsyncThunk(
   "dietAnalytics/fetchDailyAnalytics",
   async (date, { rejectWithValue }) => {
@@ -20,13 +16,9 @@ export const fetchDailyAnalytics = createAsyncThunk(
     } catch {
       return rejectWithValue("Failed to fetch daily analytics");
     }
-  },
+  }
 );
 
-/**
- * Weekly analytics
- * GET /diet/analytics/weekly/
- */
 export const fetchWeeklyAnalytics = createAsyncThunk(
   "dietAnalytics/fetchWeeklyAnalytics",
   async (_, { rejectWithValue }) => {
@@ -36,13 +28,9 @@ export const fetchWeeklyAnalytics = createAsyncThunk(
     } catch {
       return rejectWithValue("Failed to fetch weekly analytics");
     }
-  },
+  }
 );
 
-/**
- * Monthly analytics
- * GET /diet/analytics/monthly/?year=YYYY&month=MM
- */
 export const fetchMonthlyAnalytics = createAsyncThunk(
   "dietAnalytics/fetchMonthlyAnalytics",
   async ({ year, month }, { rejectWithValue }) => {
@@ -54,7 +42,7 @@ export const fetchMonthlyAnalytics = createAsyncThunk(
     } catch {
       return rejectWithValue("Failed to fetch monthly analytics");
     }
-  },
+  }
 );
 
 /* ============================
@@ -65,7 +53,6 @@ const initialState = {
   daily: null,
   weekly: null,
   monthly: null,
-
   loading: false,
   error: null,
 };
@@ -84,8 +71,6 @@ const dietAnalyticsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
-      /* -------- DAILY -------- */
       .addCase(fetchDailyAnalytics.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -99,7 +84,6 @@ const dietAnalyticsSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* -------- WEEKLY -------- */
       .addCase(fetchWeeklyAnalytics.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -113,7 +97,6 @@ const dietAnalyticsSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* -------- MONTHLY -------- */
       .addCase(fetchMonthlyAnalytics.pending, (state) => {
         state.loading = true;
         state.error = null;

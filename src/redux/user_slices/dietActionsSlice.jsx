@@ -5,10 +5,6 @@ import api from "../../api2.jsx";
    THUNKS
 ============================ */
 
-/**
- * GET current diet plan
- * Safe on refresh, does NOT regenerate
- */
 export const fetchCurrentDietPlan = createAsyncThunk(
   "dietActions/fetchCurrentDietPlan",
   async (_, { rejectWithValue }) => {
@@ -16,25 +12,14 @@ export const fetchCurrentDietPlan = createAsyncThunk(
       const res = await api.get("diet-plan/");
       return res.data;
     } catch (err) {
-      // "No active diet plan" is NOT an error
-      if (
-        err.response?.status === 404 ||
-        err.response?.data?.detail === "No active diet plan"
-      ) {
+      if (err.response?.status === 404) {
         return { has_plan: false };
       }
-
-      return rejectWithValue(
-        err.response?.data?.detail || "Failed to fetch diet plan",
-      );
+      return rejectWithValue(err.response?.data?.detail);
     }
-  },
+  }
 );
 
-/**
- * POST generate new diet plan
- * Explicit user action only
- */
 export const generateDietPlan = createAsyncThunk(
   "dietActions/generateDietPlan",
   async (_, { rejectWithValue }) => {
@@ -42,87 +27,72 @@ export const generateDietPlan = createAsyncThunk(
       const res = await api.post("diet/generate/");
       return res.data;
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.detail || "Failed to generate diet plan",
-      );
+      return rejectWithValue(err.response?.data?.detail);
     }
-  },
+  }
 );
 
-/**
- * Follow meal from plan
- */
 export const followMealFromPlan = createAsyncThunk(
   "dietActions/followMealFromPlan",
-  async (payload, { rejectWithValue }) => {
+  async ({ meal_type }, { rejectWithValue }) => {
     try {
-      const res = await api.post("diet/follow-meal/", payload);
-      return res.data;
-    } catch {
-      return rejectWithValue("Failed to follow meal");
+      const res = await api.post("diet/follow-meal/", { meal_type });
+      return { ...res.data, meal_type, source: "planned" };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.detail);
     }
-  },
+  }
 );
 
-/**
- * Log custom meal with AI
- */
 export const logCustomMeal = createAsyncThunk(
   "dietActions/logCustomMeal",
-  async (payload, { rejectWithValue }) => {
+  async ({ meal_type, food_text }, { rejectWithValue }) => {
     try {
-      const res = await api.post("diet/log-custom-meal/", payload);
-      return res.data;
-    } catch {
-      return rejectWithValue("Failed to log custom meal");
+      const res = await api.post("diet/log-custom-meal/", {
+        meal_type,
+        food_text,
+      });
+      return { ...res.data, meal_type, source: "custom" };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.detail);
     }
-  },
+  }
 );
 
-/**
- * Log extra meal (NEW)
- */
+export const skipMeal = createAsyncThunk(
+  "dietActions/skipMeal",
+  async ({ meal_type }, { rejectWithValue }) => {
+    try {
+      const res = await api.post("diet/skip-meal/", { meal_type });
+      return { ...res.data, meal_type, source: "skipped" };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.detail);
+    }
+  }
+);
+
 export const logExtraMeal = createAsyncThunk(
   "dietActions/logExtraMeal",
-  async (payload, { rejectWithValue }) => {
+  async ({ food_text }, { rejectWithValue }) => {
     try {
-      const res = await api.post("diet/extra-meal/", payload);
+      const res = await api.post("diet/extra-meal/", { food_text });
       return res.data;
     } catch {
       return rejectWithValue("Failed to log extra meal");
     }
-  },
+  }
 );
 
-/**
- * Skip meal
- */
-export const skipMeal = createAsyncThunk(
-  "dietActions/skipMeal",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await api.post("diet/skip-meal/", payload);
-      return res.data;
-    } catch {
-      return rejectWithValue("Failed to skip meal");
-    }
-  },
-);
-
-/**
- * Update weight (weekly)
- * Backend may regenerate plan
- */
 export const updateWeight = createAsyncThunk(
   "dietActions/updateWeight",
   async (payload, { rejectWithValue }) => {
     try {
       const res = await api.post("diet/update-weight/", payload);
       return res.data;
-    } catch {
-      return rejectWithValue("Failed to update weight");
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.detail);
     }
-  },
+  }
 );
 
 /* ============================
@@ -132,9 +102,13 @@ export const updateWeight = createAsyncThunk(
 const initialState = {
   loading: false,
   error: null,
-
-  currentPlan: null, // null = no plan yet
-  lastResponse: null, // feedback for follow/skip/custom/extra
+  currentPlan: null,
+  mealStatus: {
+    breakfast: null,
+    lunch: null,
+    dinner: null,
+  },
+  lastResponse: null,
 };
 
 const dietActionsSlice = createSlice({
@@ -146,11 +120,18 @@ const dietActionsSlice = createSlice({
       state.error = null;
       state.lastResponse = null;
     },
+    resetMealStatus(state) {
+      state.mealStatus = {
+        breakfast: null,
+        lunch: null,
+        dinner: null,
+      };
+    },
   },
   extraReducers: (builder) => {
-    builder
+    /* ---- ALL addCase FIRST ---- */
 
-      /* -------- FETCH CURRENT PLAN -------- */
+    builder
       .addCase(fetchCurrentDietPlan.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -165,7 +146,6 @@ const dietActionsSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* -------- GENERATE PLAN -------- */
       .addCase(generateDietPlan.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -173,36 +153,51 @@ const dietActionsSlice = createSlice({
       .addCase(generateDietPlan.fulfilled, (state, action) => {
         state.loading = false;
         state.currentPlan = action.payload;
+        state.mealStatus = {
+          breakfast: null,
+          lunch: null,
+          dinner: null,
+        };
       })
       .addCase(generateDietPlan.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      /* -------- ALL OTHER ACTIONS -------- */
+      .addCase(updateWeight.fulfilled, (state, action) => {
+        state.loading = false;
+        state.lastResponse = action.payload;
+        if (action.payload?.new_plan) {
+          state.currentPlan = action.payload.new_plan;
+          state.mealStatus = {
+            breakfast: null,
+            lunch: null,
+            dinner: null,
+          };
+        }
+      })
+
+      .addCase(logExtraMeal.fulfilled, (state, action) => {
+        state.loading = false;
+        state.lastResponse = action.payload;
+      })
+
+      /* ---- addMatcher LAST ---- */
+
       .addMatcher(
         (action) =>
-          action.type.startsWith("dietActions/") &&
-          action.type.endsWith("/pending") &&
-          !action.type.includes("fetchCurrentDietPlan") &&
-          !action.type.includes("generateDietPlan"),
-        (state) => {
-          state.loading = true;
-          state.error = null;
-        },
-      )
-      .addMatcher(
-        (action) =>
-          action.type.startsWith("dietActions/") &&
           action.type.endsWith("/fulfilled") &&
-          ![
-            fetchCurrentDietPlan.fulfilled.type,
-            generateDietPlan.fulfilled.type,
+          [
+            followMealFromPlan.fulfilled.type,
+            logCustomMeal.fulfilled.type,
+            skipMeal.fulfilled.type,
           ].includes(action.type),
         (state, action) => {
           state.loading = false;
+          const { meal_type, source } = action.payload;
+          state.mealStatus[meal_type] = source;
           state.lastResponse = action.payload;
-        },
+        }
       )
       .addMatcher(
         (action) =>
@@ -211,10 +206,12 @@ const dietActionsSlice = createSlice({
         (state, action) => {
           state.loading = false;
           state.error = action.payload;
-        },
+        }
       );
   },
 });
 
-export const { clearDietActionState } = dietActionsSlice.actions;
+export const { clearDietActionState, resetMealStatus } =
+  dietActionsSlice.actions;
+
 export default dietActionsSlice.reducer;
